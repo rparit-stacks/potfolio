@@ -18,7 +18,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ExternalLink, Github, Code, Database, Shield, Mail, Layers, Search, X } from "lucide-react"
+import { ExternalLink, Github, Code, Database, Shield, Mail, Layers, Search, X, Package } from "lucide-react"
 
 export default function ProjectsPage() {
   const [selectedProject, setSelectedProject] = useState<number | null>(null)
@@ -216,6 +216,18 @@ export default function ProjectsPage() {
                           <Github className="h-4 w-4 mr-1" /> GitHub
                         </a>
                       </Button>
+                      {project.docker && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          asChild
+                          className="border-jungle-200 dark:border-jungle-700"
+                        >
+                          <a href={project.docker} target="_blank" rel="noopener noreferrer">
+                            <Package className="h-4 w-4 mr-1" /> Docker
+                          </a>
+                        </Button>
+                      )}
                     </CardFooter>
                   </Card>
                 </motion.div>
@@ -363,6 +375,17 @@ export default function ProjectsPage() {
               >
                 Close
               </Button>
+              {filteredProjects[selectedProject].docker && (
+                <Button
+                  variant="outline"
+                  asChild
+                  className="border-jungle-200 dark:border-jungle-700"
+                >
+                  <a href={filteredProjects[selectedProject].docker!} target="_blank" rel="noopener noreferrer">
+                    <Package className="h-4 w-4 mr-2" /> Docker
+                  </a>
+                </Button>
+              )}
               <Button
                 asChild
                 className="bg-jungle-600 hover:bg-jungle-700 text-white"
