@@ -27,6 +27,7 @@ export const projectsData: Project[] = [
       "Backend service inspired by BookMyShow, developed using Spring Boot and Spring Data JPA. Provides modular architecture for managing events, users, theaters, and bookings with efficient movie booking operations.",
     techStack: ["Spring Boot", "Spring Data JPA", "REST API", "Java", "MySQL", "Spring Security"],
     github: "https://github.com/rparit-stacks/Eventura",
+    docker: "https://hub.docker.com/r/rparit1934/eventure",
     demo: null,
     blog: null,
     image: "/project_img/eventturs.png",
