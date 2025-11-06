@@ -4,6 +4,7 @@ export interface Project {
   description: string
   techStack: string[]
   github: string
+  docker?: string | null
   demo: string | null
   blog: string | null
   image: string
@@ -89,6 +90,7 @@ export const projectsData: Project[] = [
       "Backend-only Spring Boot REST API for dynamic form submissions with unique project-based API keys. Designed layered architecture (Controller, Service, Repository, Database) for scalability and security.",
     techStack: ["Spring Boot", "REST API", "JWT", "Java", "Maven", "Gson"],
     github: "https://github.com/rparit-stacks/formFree",
+    docker: "https://hub.docker.com/r/rparit1934/formfree",
     demo: null,
     blog: null,
     image: "/project_img/formFree.png",

@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ExternalLink, Github, Code, Database, Shield, Mail, Layers, ArrowRight } from "lucide-react"
+import { ExternalLink, Github, Code, Database, Shield, Mail, Layers, ArrowRight, Package } from "lucide-react"
 import { projectsData, type Project } from "@/lib/projects-data"
 
 export default function Projects({ showAll = false }: { showAll?: boolean }) {
@@ -103,6 +103,18 @@ export default function Projects({ showAll = false }: { showAll?: boolean }) {
                       <Github className="h-4 w-4 mr-1" /> GitHub
                     </a>
                   </Button>
+                  {project.docker && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="border-jungle-200 dark:border-jungle-700"
+                    >
+                      <a href={project.docker} target="_blank" rel="noopener noreferrer">
+                        <Package className="h-4 w-4 mr-1" /> Docker
+                      </a>
+                    </Button>
+                  )}
                 </CardFooter>
               </Card>
             </motion.div>
@@ -268,6 +280,17 @@ export default function Projects({ showAll = false }: { showAll?: boolean }) {
               >
                 Close
               </Button>
+              {displayedProjects[selectedProject].docker && (
+                <Button
+                  variant="outline"
+                  asChild
+                  className="border-jungle-200 dark:border-jungle-700"
+                >
+                  <a href={displayedProjects[selectedProject].docker!} target="_blank" rel="noopener noreferrer">
+                    <Package className="h-4 w-4 mr-2" /> Docker
+                  </a>
+                </Button>
+              )}
               <Button
                 asChild
                 className="bg-jungle-600 hover:bg-jungle-700 text-white"
