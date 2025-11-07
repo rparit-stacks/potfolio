@@ -32,23 +32,56 @@ export default function Contact() {
     setIsSubmitting(true)
     setError(null)
 
-    // Check if Supabase is configured
-    if (!isSupabaseReady) {
-      setError("Form submission is not configured. Please contact via email.")
-      setIsSubmitting(false)
-      return
-    }
-
     try {
-      // Insert into Supabase
-      const { error: supabaseError } = await supabase.from("contacts").insert({
-        name: formData.name,
-        email: formData.email,
-        message: formData.message,
+      // Get IP address and user agent for email
+      let ipAddress = "unknown"
+      try {
+        const ipResponse = await fetch("https://api.ipify.org?format=json")
+        const ipData = await ipResponse.json()
+        ipAddress = ipData.ip
+      } catch (error) {
+        console.error("Error fetching IP:", error)
+      }
+
+      const userAgent = typeof window !== "undefined" ? window.navigator.userAgent : "unknown"
+
+      // Send email notification about form submission
+      const emailResponse = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          type: "form",
+          ipAddress: ipAddress,
+          userAgent: userAgent,
+          formData: {
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+          },
+        }),
       })
 
-      if (supabaseError) {
-        throw supabaseError
+      if (!emailResponse.ok) {
+        throw new Error("Failed to send email notification")
+      }
+
+      // Also insert into Supabase if configured
+      if (isSupabaseReady) {
+        try {
+          const { error: supabaseError } = await supabase.from("contacts").insert({
+            name: formData.name,
+            email: formData.email,
+            message: formData.message,
+          })
+
+          if (supabaseError) {
+            console.error("Supabase error (non-critical):", supabaseError)
+          }
+        } catch (supabaseErr) {
+          console.error("Supabase error (non-critical):", supabaseErr)
+        }
       }
 
       setIsSubmitting(false)

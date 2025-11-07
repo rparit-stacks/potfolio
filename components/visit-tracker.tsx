@@ -6,12 +6,6 @@ import { supabase, isSupabaseReady } from "@/lib/supabase"
 export default function VisitTracker() {
   useEffect(() => {
     const trackVisit = async () => {
-      // Check if Supabase is configured
-      if (!isSupabaseReady) {
-        console.warn("Supabase not configured. Visit tracking disabled.")
-        return
-      }
-
       try {
         // Get IP address (using a free service)
         let ipAddress = "unknown"
@@ -28,13 +22,38 @@ export default function VisitTracker() {
         const pageUrl = typeof window !== "undefined" ? window.location.href : "unknown"
         const referrer = typeof window !== "undefined" ? document.referrer || "direct" : "unknown"
 
-        // Insert visit into Supabase
-        await supabase.from("visits").insert({
-          ip_address: ipAddress,
-          user_agent: userAgent,
-          page_url: pageUrl,
-          referrer: referrer,
-        })
+        // Send email notification about the visit
+        try {
+          await fetch("/api/send-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              type: "visit",
+              ipAddress: ipAddress,
+              userAgent: userAgent,
+              pageUrl: pageUrl,
+              referrer: referrer,
+            }),
+          })
+        } catch (emailError) {
+          console.error("Error sending visit email:", emailError)
+        }
+
+        // Also insert into Supabase if configured
+        if (isSupabaseReady) {
+          try {
+            await supabase.from("visits").insert({
+              ip_address: ipAddress,
+              user_agent: userAgent,
+              page_url: pageUrl,
+              referrer: referrer,
+            })
+          } catch (supabaseError) {
+            console.error("Error inserting into Supabase:", supabaseError)
+          }
+        }
       } catch (error) {
         console.error("Error tracking visit:", error)
       }
