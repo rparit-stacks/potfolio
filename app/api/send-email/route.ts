@@ -67,6 +67,42 @@ function formatDate(): string {
   return now.toLocaleDateString("en-US", options)
 }
 
+// Helper function to get location from IP address
+async function getLocationFromIp(ipAddress: string): Promise<{
+  city?: string
+  region?: string
+  country?: string
+  lat?: number
+  lon?: number
+  googleMapsUrl?: string
+}> {
+  if (ipAddress === "unknown" || !ipAddress) {
+    return {}
+  }
+
+  try {
+    // Using ip-api.com (free, no API key required)
+    const response = await fetch(`https://ip-api.com/json/${ipAddress}?fields=status,message,country,regionName,city,lat,lon`)
+    const data = await response.json()
+
+    if (data.status === "success" && data.lat && data.lon) {
+      const googleMapsUrl = `https://www.google.com/maps?q=${data.lat},${data.lon}`
+      return {
+        city: data.city,
+        region: data.regionName,
+        country: data.country,
+        lat: data.lat,
+        lon: data.lon,
+        googleMapsUrl: googleMapsUrl,
+      }
+    }
+  } catch (error) {
+    console.error("Error fetching location from IP:", error)
+  }
+
+  return {}
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
@@ -76,6 +112,12 @@ export async function POST(request: NextRequest) {
     const visitorIp = ipAddress || getIpAddress(request)
     const time = formatTime12Hour()
     const date = formatDate()
+
+    // Get location from IP
+    const location = await getLocationFromIp(visitorIp)
+    const locationText = location.city && location.country
+      ? `${location.city}, ${location.region ? location.region + ", " : ""}${location.country}`
+      : "Location not available"
 
     let subject = ""
     let htmlContent = ""
@@ -90,12 +132,22 @@ export async function POST(request: NextRequest) {
           </h2>
           <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin-top: 20px;">
             <p style="margin: 8px 0;"><strong>IP Address:</strong> ${visitorIp}</p>
+            <p style="margin: 8px 0;"><strong>Location:</strong> ${locationText}</p>
             <p style="margin: 8px 0;"><strong>Date:</strong> ${date}</p>
             <p style="margin: 8px 0;"><strong>Time:</strong> ${time}</p>
             <p style="margin: 8px 0;"><strong>Page URL:</strong> ${pageUrl || "Home Page"}</p>
             <p style="margin: 8px 0;"><strong>Referrer:</strong> ${referrer || "Direct Visit"}</p>
             <p style="margin: 8px 0;"><strong>User Agent:</strong> ${userAgent || "Unknown"}</p>
           </div>
+          ${location.googleMapsUrl ? `
+          <div style="margin-top: 20px; text-align: center;">
+            <a href="${location.googleMapsUrl}" 
+               target="_blank" 
+               style="display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+              📍 View Location on Google Maps
+            </a>
+          </div>
+          ` : ""}
           <p style="margin-top: 20px; color: #6b7280; font-size: 14px;">
             A person from IP address <strong>${visitorIp}</strong> visited your website at <strong>${time}</strong> on <strong>${date}</strong>.
           </p>
@@ -120,10 +172,20 @@ export async function POST(request: NextRequest) {
           <div style="background-color: #e5e7eb; padding: 15px; border-radius: 8px; margin-top: 15px;">
             <h3 style="margin-top: 0; color: #374151;">Visitor Information</h3>
             <p style="margin: 8px 0;"><strong>IP Address:</strong> ${visitorIp}</p>
+            <p style="margin: 8px 0;"><strong>Location:</strong> ${locationText}</p>
             <p style="margin: 8px 0;"><strong>Date:</strong> ${date}</p>
             <p style="margin: 8px 0;"><strong>Time:</strong> ${time}</p>
             <p style="margin: 8px 0;"><strong>User Agent:</strong> ${userAgent || "Unknown"}</p>
           </div>
+          ${location.googleMapsUrl ? `
+          <div style="margin-top: 20px; text-align: center;">
+            <a href="${location.googleMapsUrl}" 
+               target="_blank" 
+               style="display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+              📍 View Location on Google Maps
+            </a>
+          </div>
+          ` : ""}
         </div>
       `
     } else {
