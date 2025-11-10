@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
-import { Download } from "lucide-react"
+import { Download, Github, Linkedin } from "lucide-react"
 import { supabase, isSupabaseReady } from "@/lib/supabase"
 
 export default function Hero() {
@@ -159,6 +159,26 @@ export default function Hero() {
                 className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
               >
                 View Projects
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
+              >
+                <a href="https://www.linkedin.com/in/rparit1934/" target="_blank" rel="noopener noreferrer">
+                  <Linkedin className="h-4 w-4 mr-2" /> LinkedIn
+                </a>
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
+              >
+                <a href="https://github.com/rparit-stacks" target="_blank" rel="noopener noreferrer">
+                  <Github className="h-4 w-4 mr-2" /> GitHub
+                </a>
               </Button>
               {resumeUrl && (
                 <Button
