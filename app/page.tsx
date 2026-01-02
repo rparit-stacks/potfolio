@@ -1,6 +1,8 @@
 import { ChevronDown } from "lucide-react"
 import Hero from "@/components/hero"
 import About from "@/components/about"
+import Education from "@/components/education"
+import Experience from "@/components/experience"
 import Projects from "@/components/projects"
 import Services from "@/components/services"
 import Skills from "@/components/skills"
@@ -19,6 +21,8 @@ export default function Home() {
       </div>
 
       <About />
+      <Education />
+      <Experience />
       <Skills />
       <Projects />
       <Services />
