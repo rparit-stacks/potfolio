@@ -4,6 +4,7 @@ import { Inter } from "next/font/google"
 import { ThemeProvider } from "@/components/theme-provider"
 import Navbar from "@/components/navbar"
 import VisitTracker from "@/components/visit-tracker"
+import { Toaster } from "@/components/ui/toaster"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -28,6 +29,7 @@ export default function RootLayout({
           <VisitTracker />
           <Navbar />
           {children}
+          <Toaster />
         </ThemeProvider>
       </body>
     </html>

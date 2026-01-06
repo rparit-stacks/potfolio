@@ -4,13 +4,11 @@ import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
 import { useState, useEffect } from "react"
 import { Download, Github, Linkedin } from "lucide-react"
-import { supabase, isSupabaseReady } from "@/lib/supabase"
 
 export default function Hero() {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
   const [isMounted, setIsMounted] = useState(false)
   const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
-  const [resumeUrl, setResumeUrl] = useState<string | null>(null)
 
   useEffect(() => {
     setIsMounted(true)
@@ -30,31 +28,6 @@ export default function Hero() {
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
-  useEffect(() => {
-    const fetchResumeUrl = async () => {
-      // Check if Supabase is configured
-      if (!isSupabaseReady) {
-        console.warn("Supabase not configured. Resume download disabled.")
-        return
-      }
-
-      try {
-        const { data, error } = await supabase
-          .from("resume_settings")
-          .select("resume_url")
-          .limit(1)
-          .single()
-
-        if (!error && data) {
-          setResumeUrl(data.resume_url)
-        }
-      } catch (error) {
-        console.error("Error fetching resume URL:", error)
-      }
-    }
-
-    fetchResumeUrl()
-  }, [])
 
   const scrollToProjects = () => {
     document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })
@@ -180,18 +153,16 @@ export default function Hero() {
                   <Github className="h-4 w-4 mr-2" /> GitHub
                 </a>
               </Button>
-              {resumeUrl && (
-                <Button
-                  size="lg"
-                  variant="outline"
-                  asChild
-                  className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
-                >
-                  <a href={resumeUrl} download target="_blank" rel="noopener noreferrer">
-                    <Download className="h-4 w-4 mr-2" /> Download Resume
-                  </a>
-                </Button>
-              )}
+              <Button
+                size="lg"
+                variant="outline"
+                asChild
+                className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
+              >
+                <a href="/Rohit-parit-resume.pdf" download="Rohit-Parit-Resume.pdf" target="_blank" rel="noopener noreferrer">
+                  <Download className="h-4 w-4 mr-2" /> Download Resume
+                </a>
+              </Button>
             </div>
           </motion.div>
         </motion.div>

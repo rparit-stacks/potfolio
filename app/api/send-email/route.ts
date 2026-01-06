@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 
-// Hardcoded email configuration
+// Hardcoded email configuration - Hostinger SMTP
 const EMAIL_CONFIG = {
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false, // true for 465, false for other ports
+  host: "smtp.hostinger.com",
+  port: 465,
+  secure: true, // true for 465, false for other ports
   auth: {
-    user: "rohitparit1934@gmail.com",
-    pass: "wwrl cmvv kksf qcdi", // App password
+    user: "info@codvertex.in",
+    pass: "Rparit@111288", // Hostinger email password
   },
 }
 
-// Recipient email
-const RECIPIENT_EMAIL = "rbusiness1999@gmail.com"
+// Recipient email - where all emails will be sent
+const RECIPIENT_EMAIL = "rohitparit1934@gmail.com"
 
 // Create transporter
 const transporter = nodemailer.createTransport(EMAIL_CONFIG)
@@ -132,7 +132,6 @@ export async function POST(request: NextRequest) {
           </h2>
           <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin-top: 20px;">
             <p style="margin: 8px 0;"><strong>IP Address:</strong> ${visitorIp}</p>
-            <p style="margin: 8px 0;"><strong>Location:</strong> ${locationText}</p>
             <p style="margin: 8px 0;"><strong>Date:</strong> ${date}</p>
             <p style="margin: 8px 0;"><strong>Time:</strong> ${time}</p>
             <p style="margin: 8px 0;"><strong>Page URL:</strong> ${pageUrl || "Home Page"}</p>
@@ -140,12 +139,30 @@ export async function POST(request: NextRequest) {
             <p style="margin: 8px 0;"><strong>User Agent:</strong> ${userAgent || "Unknown"}</p>
           </div>
           ${location.googleMapsUrl ? `
-          <div style="margin-top: 20px; text-align: center;">
-            <a href="${location.googleMapsUrl}" 
-               target="_blank" 
-               style="display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-              📍 View Location on Google Maps
-            </a>
+          <div style="margin-top: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 15px;">
+              <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: bold;">📍 Visitor Location</h3>
+              <p style="color: rgba(255,255,255,0.9); margin: 5px 0; font-size: 16px; font-weight: 500;">
+                ${location.city ? location.city : ""}${location.region ? `, ${location.region}` : ""}${location.country ? `, ${location.country}` : ""}
+              </p>
+              ${location.lat && location.lon ? `
+              <p style="color: rgba(255,255,255,0.8); margin: 5px 0; font-size: 12px;">
+                Coordinates: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}
+              </p>
+              ` : ""}
+            </div>
+            <div style="text-align: center;">
+              <a href="${location.googleMapsUrl}" 
+                 target="_blank" 
+                 style="display: inline-block; background-color: white; color: #667eea; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s;">
+                🗺️ Open in Google Maps
+              </a>
+            </div>
+          </div>
+          ` : locationText !== "Location not available" ? `
+          <div style="margin-top: 20px; background-color: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <p style="margin: 0; color: #92400e;"><strong>Location:</strong> ${locationText}</p>
+            <p style="margin: 8px 0 0 0; color: #92400e; font-size: 12px;">Map coordinates not available for this IP address.</p>
           </div>
           ` : ""}
           <p style="margin-top: 20px; color: #6b7280; font-size: 14px;">
@@ -172,18 +189,35 @@ export async function POST(request: NextRequest) {
           <div style="background-color: #e5e7eb; padding: 15px; border-radius: 8px; margin-top: 15px;">
             <h3 style="margin-top: 0; color: #374151;">Visitor Information</h3>
             <p style="margin: 8px 0;"><strong>IP Address:</strong> ${visitorIp}</p>
-            <p style="margin: 8px 0;"><strong>Location:</strong> ${locationText}</p>
             <p style="margin: 8px 0;"><strong>Date:</strong> ${date}</p>
             <p style="margin: 8px 0;"><strong>Time:</strong> ${time}</p>
             <p style="margin: 8px 0;"><strong>User Agent:</strong> ${userAgent || "Unknown"}</p>
           </div>
           ${location.googleMapsUrl ? `
-          <div style="margin-top: 20px; text-align: center;">
-            <a href="${location.googleMapsUrl}" 
-               target="_blank" 
-               style="display: inline-block; background-color: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold; font-size: 16px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
-              📍 View Location on Google Maps
-            </a>
+          <div style="margin-top: 20px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+            <div style="text-align: center; margin-bottom: 15px;">
+              <h3 style="color: white; margin: 0 0 10px 0; font-size: 18px; font-weight: bold;">📍 Visitor Location</h3>
+              <p style="color: rgba(255,255,255,0.9); margin: 5px 0; font-size: 16px; font-weight: 500;">
+                ${location.city ? location.city : ""}${location.region ? `, ${location.region}` : ""}${location.country ? `, ${location.country}` : ""}
+              </p>
+              ${location.lat && location.lon ? `
+              <p style="color: rgba(255,255,255,0.8); margin: 5px 0; font-size: 12px;">
+                Coordinates: ${location.lat.toFixed(4)}, ${location.lon.toFixed(4)}
+              </p>
+              ` : ""}
+            </div>
+            <div style="text-align: center;">
+              <a href="${location.googleMapsUrl}" 
+                 target="_blank" 
+                 style="display: inline-block; background-color: white; color: #667eea; padding: 14px 28px; text-decoration: none; border-radius: 8px; font-weight: bold; font-size: 16px; box-shadow: 0 4px 8px rgba(0,0,0,0.2); transition: transform 0.2s;">
+                🗺️ Open in Google Maps
+              </a>
+            </div>
+          </div>
+          ` : locationText !== "Location not available" ? `
+          <div style="margin-top: 20px; background-color: #fef3c7; padding: 15px; border-radius: 8px; border-left: 4px solid #f59e0b;">
+            <p style="margin: 0; color: #92400e;"><strong>Location:</strong> ${locationText}</p>
+            <p style="margin: 8px 0 0 0; color: #92400e; font-size: 12px;">Map coordinates not available for this IP address.</p>
           </div>
           ` : ""}
         </div>
