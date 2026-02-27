@@ -21,6 +21,16 @@ export default function VisitTracker() {
         const userAgent = typeof window !== "undefined" ? window.navigator.userAgent : "unknown"
         const pageUrl = typeof window !== "undefined" ? window.location.href : "unknown"
         const referrer = typeof window !== "undefined" ? document.referrer || "direct" : "unknown"
+        
+        // Get source parameter from URL (e.g., ?source=resume, ?source=pdf, etc.)
+        let source = "Direct Visit"
+        if (typeof window !== "undefined") {
+          const urlParams = new URLSearchParams(window.location.search)
+          const sourceParam = urlParams.get("source")
+          if (sourceParam) {
+            source = sourceParam.charAt(0).toUpperCase() + sourceParam.slice(1) // Capitalize first letter
+          }
+        }
 
         // Send email notification about the visit
         try {
@@ -35,6 +45,7 @@ export default function VisitTracker() {
               userAgent: userAgent,
               pageUrl: pageUrl,
               referrer: referrer,
+              source: source,
             }),
           })
         } catch (emailError) {
@@ -49,6 +60,7 @@ export default function VisitTracker() {
               user_agent: userAgent,
               page_url: pageUrl,
               referrer: referrer,
+              source: source,
             })
           } catch (supabaseError) {
             console.error("Error inserting into Supabase:", supabaseError)

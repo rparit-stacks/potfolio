@@ -15,11 +15,100 @@ export interface Project {
   entities?: string[]
   apiEndpoints?: string[]
   videoTutorial?: string
+  extraLinks?: { label: string; url: string }[]
+  adminCredentials?: {
+    email: string
+    password: string
+    note?: string
+    loginUrl: string
+  }
   skills: string[] // All skills used in the project
   primarySkill: string // Main skill this project showcases
 }
 
 export const projectsData: Project[] = [
+  {
+    id: "quout-studio-sara",
+    title: "Quout (Studio Sara)",
+    description:
+      "Full e-commerce platform for custom and digital products with a customer storefront, admin dashboard, mockup service, and separate quotation tool.",
+    techStack: [
+      "React",
+      "TypeScript",
+      "Vite",
+      "Tailwind CSS",
+      "Spring Boot",
+      "PostgreSQL",
+      "Node.js",
+      "Express",
+      "Cloudinary",
+    ],
+    github: "https://github.com/rparit-stacks/sara-backend-ecom",
+    docker: null,
+    demo: "https://studiosara.in/",
+    blog: "https://www.studiosara.in/admin-sara",
+    image: "/Studio-Sara-Custom-Prints-Embroidery-Design-Studio-Low-MOQ-Printing-02-03-2026_09_18_PM.png",
+    detailedDescription:
+      "Quout (Studio Sara) is an end-to-end e-commerce system for custom, digital, and physical products. It includes a storefront, admin dashboard, a dedicated mockup generation service, and a separate quotation tool. The frontend UI was designed with LLM assistance.",
+    features: [
+      "Customer storefront with product search, filters, cart, wishlist, and checkout",
+      "Admin dashboard for product, category, order, user, and content management",
+      "Custom product design tool with design library and mockup generation",
+      "Digital product uploads with Cloudinary processing and secure ZIP downloads",
+      "Payments via Stripe, Razorpay, and COD with partial COD support",
+      "Shipping rules, ranges, slabs, and unit rate calculations",
+      "CMS pages, blog, banners, testimonials, and marketing sections",
+    ],
+    technologies: [
+      "React 18",
+      "TypeScript",
+      "Vite",
+      "Tailwind CSS",
+      "shadcn-ui (Radix)",
+      "React Router",
+      "React Hook Form + Zod",
+      "TanStack Query",
+      "Framer Motion",
+      "Spring Boot 3.5",
+      "Java 21",
+      "PostgreSQL",
+      "Spring Data JPA",
+      "Spring Security + JWT",
+      "OAuth2",
+      "Stripe",
+      "Razorpay",
+      "Node.js",
+      "Express",
+      "Sharp",
+      "Cloudinary",
+    ],
+    keyFeatures: [
+      "Multi-app architecture: storefront, admin dashboard, mockup service, quotation tool",
+      "Custom product configuration with pricing slabs and design requests",
+      "Secure digital product delivery with preview vs download files",
+      "Comprehensive admin tooling: CMS, shipping, payments, coupons, and audit logs",
+    ],
+    extraLinks: [{ label: "Design Observer Pro Repo", url: "https://github.com/rparit-stacks/design-observer-pro" }],
+    adminCredentials: {
+      email: "admin@studiosara.com",
+      password: "admin@sara",
+      note: "Password will expire when the project is handed over to the client.",
+      loginUrl: "https://www.studiosara.in/admin-sara",
+    },
+    skills: [
+      "React",
+      "TypeScript",
+      "Tailwind CSS",
+      "Spring Boot",
+      "PostgreSQL",
+      "Node.js",
+      "Express",
+      "Cloudinary",
+      "Stripe",
+      "Razorpay",
+    ],
+    primarySkill: "Full-Stack",
+  },
   {
     id: "eventura",
     title: "Eventura",

@@ -106,7 +106,7 @@ async function getLocationFromIp(ipAddress: string): Promise<{
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
-    const { type, ipAddress, userAgent, pageUrl, referrer, formData } = body
+    const { type, ipAddress, userAgent, pageUrl, referrer, formData, source } = body
 
     // Get IP address if not provided
     const visitorIp = ipAddress || getIpAddress(request)
@@ -132,6 +132,7 @@ export async function POST(request: NextRequest) {
           </h2>
           <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin-top: 20px;">
             <p style="margin: 8px 0;"><strong>IP Address:</strong> ${visitorIp}</p>
+            <p style="margin: 8px 0;"><strong>Source:</strong> <span style="background-color: ${source && source !== "Direct Visit" ? "#10b981" : "#f59e0b"}; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">${source || "Direct Visit"}</span></p>
             <p style="margin: 8px 0;"><strong>Date:</strong> ${date}</p>
             <p style="margin: 8px 0;"><strong>Time:</strong> ${time}</p>
             <p style="margin: 8px 0;"><strong>Page URL:</strong> ${pageUrl || "Home Page"}</p>
@@ -189,6 +190,7 @@ export async function POST(request: NextRequest) {
           <div style="background-color: #e5e7eb; padding: 15px; border-radius: 8px; margin-top: 15px;">
             <h3 style="margin-top: 0; color: #374151;">Visitor Information</h3>
             <p style="margin: 8px 0;"><strong>IP Address:</strong> ${visitorIp}</p>
+            <p style="margin: 8px 0;"><strong>Source:</strong> <span style="background-color: ${source && source !== "Direct Visit" ? "#10b981" : "#f59e0b"}; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;">${source || "Direct Visit"}</span></p>
             <p style="margin: 8px 0;"><strong>Date:</strong> ${date}</p>
             <p style="margin: 8px 0;"><strong>Time:</strong> ${time}</p>
             <p style="margin: 8px 0;"><strong>User Agent:</strong> ${userAgent || "Unknown"}</p>

@@ -14,7 +14,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ExternalLink, Github, Code, Database, Shield, Mail, Layers, ArrowRight, Package } from "lucide-react"
+import { ExternalLink, Github, Code, Database, Shield, Mail, Layers, ArrowRight, Package, KeyRound } from "lucide-react"
 import { projectsData, type Project } from "@/lib/projects-data"
 
 export default function Projects({ showAll = false }: { showAll?: boolean }) {
@@ -85,7 +85,7 @@ export default function Projects({ showAll = false }: { showAll?: boolean }) {
                     {project.description}
                   </CardDescription>
                 </CardContent>
-                <CardFooter className="flex gap-2 pt-2">
+                <CardFooter className="flex gap-2 pt-2 flex-wrap">
                   <Button
                     variant="outline"
                     size="sm"
@@ -104,6 +104,55 @@ export default function Projects({ showAll = false }: { showAll?: boolean }) {
                       <Github className="h-4 w-4 mr-1" /> GitHub
                     </a>
                   </Button>
+                  {project.demo && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="border-jungle-200 dark:border-jungle-700"
+                    >
+                      <a href={project.demo} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4 mr-1" /> Storefront
+                      </a>
+                    </Button>
+                  )}
+                  {project.blog && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="border-jungle-200 dark:border-jungle-700"
+                    >
+                      <a href={project.blog} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4 mr-1" /> Admin Panel
+                      </a>
+                    </Button>
+                  )}
+                  {project.extraLinks?.map((link) => (
+                    <Button
+                      key={link.url}
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="border-jungle-200 dark:border-jungle-700"
+                    >
+                      <a href={link.url} target="_blank" rel="noopener noreferrer">
+                        <ExternalLink className="h-4 w-4 mr-1" /> {link.label}
+                      </a>
+                    </Button>
+                  ))}
+                  {project.adminCredentials && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      asChild
+                      className="border-jungle-200 dark:border-jungle-700"
+                    >
+                      <a href={project.adminCredentials.loginUrl} target="_blank" rel="noopener noreferrer">
+                        <KeyRound className="h-4 w-4 mr-1" /> Admin (Pass: {project.adminCredentials.password})
+                      </a>
+                    </Button>
+                  )}
                   {project.docker && (
                     <Button
                       variant="outline"
@@ -250,6 +299,75 @@ export default function Projects({ showAll = false }: { showAll?: boolean }) {
                       </li>
                     ))}
                   </ul>
+                </div>
+              )}
+
+              {/* Links */}
+              {(displayedProjects[selectedProject].demo ||
+                displayedProjects[selectedProject].blog ||
+                displayedProjects[selectedProject].extraLinks?.length) && (
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                    <ExternalLink className="h-5 w-5 text-jungle-500" />
+                    Links
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {displayedProjects[selectedProject].demo && (
+                      <Button variant="outline" asChild className="border-jungle-200 dark:border-jungle-700">
+                        <a href={displayedProjects[selectedProject].demo!} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-4 w-4 mr-2" /> Storefront
+                        </a>
+                      </Button>
+                    )}
+                    {displayedProjects[selectedProject].blog && (
+                      <Button variant="outline" asChild className="border-jungle-200 dark:border-jungle-700">
+                        <a href={displayedProjects[selectedProject].blog!} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-4 w-4 mr-2" /> Admin Panel
+                        </a>
+                      </Button>
+                    )}
+                    {displayedProjects[selectedProject].extraLinks?.map((link) => (
+                      <Button key={link.url} variant="outline" asChild className="border-jungle-200 dark:border-jungle-700">
+                        <a href={link.url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-4 w-4 mr-2" /> {link.label}
+                        </a>
+                      </Button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Admin Credentials */}
+              {displayedProjects[selectedProject].adminCredentials && (
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
+                    <KeyRound className="h-5 w-5 text-jungle-500" />
+                    Admin Credentials
+                  </h3>
+                  <div className="space-y-2 text-slate-600 dark:text-slate-300">
+                    <div>
+                      <span className="font-semibold text-slate-700 dark:text-slate-200">Email:</span>{" "}
+                      {displayedProjects[selectedProject].adminCredentials.email}
+                    </div>
+                    <div>
+                      <span className="font-semibold text-slate-700 dark:text-slate-200">Password:</span>{" "}
+                      {displayedProjects[selectedProject].adminCredentials.password}
+                    </div>
+                    {displayedProjects[selectedProject].adminCredentials.note && (
+                      <div className="text-sm text-slate-500 dark:text-slate-400">
+                        {displayedProjects[selectedProject].adminCredentials.note}
+                      </div>
+                    )}
+                    <Button variant="outline" asChild className="border-jungle-200 dark:border-jungle-700">
+                      <a
+                        href={displayedProjects[selectedProject].adminCredentials.loginUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        <KeyRound className="h-4 w-4 mr-2" /> Open Admin Login
+                      </a>
+                    </Button>
+                  </div>
                 </div>
               )}
 

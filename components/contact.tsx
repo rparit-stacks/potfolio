@@ -44,6 +44,16 @@ export default function Contact() {
       }
 
       const userAgent = typeof window !== "undefined" ? window.navigator.userAgent : "unknown"
+      
+      // Get source parameter from URL (e.g., ?source=resume, ?source=pdf, etc.)
+      let source = "Direct Visit"
+      if (typeof window !== "undefined") {
+        const urlParams = new URLSearchParams(window.location.search)
+        const sourceParam = urlParams.get("source")
+        if (sourceParam) {
+          source = sourceParam.charAt(0).toUpperCase() + sourceParam.slice(1) // Capitalize first letter
+        }
+      }
 
       // Send email notification about form submission
       const emailResponse = await fetch("/api/send-email", {
@@ -55,6 +65,7 @@ export default function Contact() {
           type: "form",
           ipAddress: ipAddress,
           userAgent: userAgent,
+          source: source,
           formData: {
             name: formData.name,
             email: formData.email,

@@ -159,7 +159,7 @@ export default function Hero() {
                 asChild
                 className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
               >
-                <a href="/Rohit-parit-resume.pdf" download="Rohit-Parit-Resume.pdf" target="_blank" rel="noopener noreferrer">
+                <a href="/rohit-parit-resume.pdf" download="Rohit-Parit-Resume.pdf" target="_blank" rel="noopener noreferrer">
                   <Download className="h-4 w-4 mr-2" /> Download Resume
                 </a>
               </Button>
