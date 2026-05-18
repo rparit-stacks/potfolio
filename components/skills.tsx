@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Card, CardContent } from "@/components/ui/card"
-import { Code, Network, Layers, Shield, Workflow, Database, Brain, GitBranch, TestTube, Sparkles, Server, Cloud, Lock, Mail, FileCode, Box, Terminal } from "lucide-react"
+import { Code, Network, Layers, Shield, Workflow, Database, Brain, GitBranch, TestTube, Sparkles, Server, Cloud, Lock, Mail, FileCode, Box, Terminal, Smartphone, CreditCard } from "lucide-react"
 import { projectsData } from "@/lib/projects-data"
 import { useToast } from "@/hooks/use-toast"
 
@@ -20,7 +20,8 @@ export default function Skills() {
       skills: [
         "Spring Boot", 
         "Spring MVC", 
-        "Spring Data JPA", 
+        "Spring Data JPA",
+        "Spring Data MongoDB",
         "REST APIs", 
         "Microservices Architecture", 
         "Servlet", 
@@ -38,7 +39,9 @@ export default function Skills() {
       icon: <Database className="h-6 w-6" />,
       skills: [
         "MySQL", 
-        "PostgreSQL", 
+        "PostgreSQL",
+        "MongoDB",
+        "MongoDB Atlas",
         "DynamoDB", 
         "Kafka (Message Queue)", 
         "Flyway (Database Migration)", 
@@ -61,10 +64,46 @@ export default function Skills() {
         "Linux", 
         "Containerization",
         "Docker Hub",
-        "DevOps Practices"
+        "DevOps Practices",
+        "Vercel",
+        "SPA Deployment"
       ],
       color: "from-indigo-500 to-purple-500",
       bgColor: "bg-indigo-100 dark:bg-indigo-900/30",
+    },
+    {
+      title: "Frontend & UI",
+      icon: <Smartphone className="h-6 w-6" />,
+      skills: [
+        "React",
+        "TypeScript",
+        "Vite",
+        "TanStack Query",
+        "Tailwind CSS",
+        "Responsive UI",
+        "SPA Routing",
+        "Component Architecture",
+        "State Management",
+        "OpenStreetMap / Geolocation UI"
+      ],
+      color: "from-cyan-500 to-blue-500",
+      bgColor: "bg-cyan-100 dark:bg-cyan-900/30",
+    },
+    {
+      title: "Payments & Integrations",
+      icon: <CreditCard className="h-6 w-6" />,
+      skills: [
+        "Razorpay",
+        "Firebase Cloud Messaging",
+        "Cloudinary",
+        "Google OAuth",
+        "Email OTP",
+        "Push Notifications",
+        "File Upload APIs",
+        "Third-party API Integration"
+      ],
+      color: "from-emerald-500 to-teal-500",
+      bgColor: "bg-emerald-100 dark:bg-emerald-900/30",
     },
     {
       title: "Programming Languages",
@@ -362,7 +401,7 @@ export default function Skills() {
             </motion.div>
           </div>
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Technologies and tools I use to build robust and scalable backend systems with AI integration.
+            Technologies and tools I use to build full-stack products — Spring Boot APIs, React apps, payments, and AI integration.
           </p>
         </motion.div>
 
