@@ -46,7 +46,7 @@ export const projectsData: Project[] = [
     docker: null,
     demo: null,
     blog: null,
-    image: "/project_img/clearpack.svg",
+    image: "/project_img/clearpack.png",
     detailedDescription:
       "PackIQ Copilot is the ClearPack backend that helps factory technicians ask natural-language questions about machines (MDS), faults, maintenance, changeover, and line performance. It uses a V3 RAG architecture with LLM-based intent routing, hybrid vector retrieval over ingested manuals, and dedicated analytics flows for production trends, alerts, and state rankings. Responses stream over SSE and can include structured visuals such as hourly productivity charts.",
     features: [
@@ -138,11 +138,11 @@ export const projectsData: Project[] = [
     ],
     github: "https://github.com/rparit-stacks",
     docker: null,
-    demo: "https://nainistore.com",
+    demo: "https://www.nainistore.in",
     blog: "https://admin.nainistore.in",
-    image: "/project_img/nainistore.svg",
+    image: "/project_img/nainistore.png",
     detailedDescription:
-      "NainiStore is a production hyperlocal marketplace built for Nainital. Customers order from multiple categories (restaurants, grocery bazaar, electronics) in one flow. The backend groups sub-orders under a master order and assigns one delivery partner for multi-stop pickups. Sellers manage stores and products via a dedicated panel; admins approve catalog items, configure delivery zones, and run COD settlements. The stack includes four React SPAs on Vercel and a Spring Boot monolith on MongoDB with Razorpay, Cloudinary, and FCM.",
+      "NainiStore is a production hyperlocal marketplace built for Nainital. Customer, seller, admin, and delivery frontends run on nainistore.in subdomains (Vercel); the Spring Boot API is hosted at nainistore.com. Customers order from multiple categories (restaurants, grocery bazaar, electronics) in one flow. The backend groups sub-orders under a master order and assigns one delivery partner for multi-stop pickups. Public health check: GET https://nainistore.com/api/health returns a welcome message.",
     features: [
       "Multi-category catalog — Food, Bazaar, Electronics with store search and product approval workflow",
       "Master order + sub-orders — split checkout per seller, unified delivery trip for the partner",
@@ -198,6 +198,7 @@ export const projectsData: Project[] = [
       "Admins",
     ],
     apiEndpoints: [
+      "GET /api/health — Welcome + status (public, nainistore.com)",
       "POST /api/auth/send-otp, /verify-otp, /google, /refresh — Customer auth",
       "GET /api/catalog/{food|bazaar|electronic}/stores, /products, /stores/search — Public catalog",
       "POST /api/orders, GET /api/orders — Customer checkout",
@@ -207,6 +208,7 @@ export const projectsData: Project[] = [
       "POST /api/seller/auth/login — Seller panel",
     ],
     extraLinks: [
+      { label: "Backend API", url: "https://nainistore.com/api/health" },
       { label: "Seller App", url: "https://seller.nainistore.in" },
       { label: "Delivery App", url: "https://delivery.nainistore.in" },
     ],

@@ -29,7 +29,9 @@ Full-stack hyperlocal commerce platform for Nainital: multi-category customer ap
 
 ## Live Apps
 
-- Customer: https://nainistore.com
+- Customer (frontend): https://www.nainistore.in
+- Backend API: https://nainistore.com
+- Health check: https://nainistore.com/api/health
 - Seller: https://seller.nainistore.in
 - Delivery: https://delivery.nainistore.in
 - Admin: https://admin.nainistore.in
