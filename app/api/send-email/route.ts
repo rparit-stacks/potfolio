@@ -1,22 +1,35 @@
 import { NextRequest, NextResponse } from "next/server"
 import nodemailer from "nodemailer"
 
-// Hardcoded email configuration - Hostinger SMTP
-const EMAIL_CONFIG = {
-  host: "smtp.hostinger.com",
-  port: 465,
-  secure: true, // true for 465, false for other ports
-  auth: {
-    user: "info@codvertex.in",
-    pass: "Rparit@111288", // Hostinger email password
-  },
+function getMailConfig() {
+  const user = process.env.SMTP_USER
+  const pass = process.env.SMTP_PASSWORD
+
+  if (!user || !pass) {
+    throw new Error(
+      "SMTP_USER and SMTP_PASSWORD must be set (see .env.example → copy to .env.local)"
+    )
+  }
+
+  return {
+    host: process.env.SMTP_HOST || "smtp.zoho.in",
+    port: Number(process.env.SMTP_PORT || "465"),
+    secure: true,
+    auth: { user, pass },
+    fromName: process.env.SMTP_FROM_NAME || "Portfolio — Rohit Parit",
+    to: process.env.SMTP_TO || "rohitparit1934@gmail.com",
+  }
 }
 
-// Recipient email - where all emails will be sent
-const RECIPIENT_EMAIL = "rohitparit1934@gmail.com"
-
-// Create transporter
-const transporter = nodemailer.createTransport(EMAIL_CONFIG)
+function createTransporter() {
+  const cfg = getMailConfig()
+  return nodemailer.createTransport({
+    host: cfg.host,
+    port: cfg.port,
+    secure: cfg.secure,
+    auth: cfg.auth,
+  })
+}
 
 // Helper function to get IP address from request
 function getIpAddress(request: NextRequest): string {
@@ -105,6 +118,9 @@ async function getLocationFromIp(ipAddress: string): Promise<{
 
 export async function POST(request: NextRequest) {
   try {
+    const mailCfg = getMailConfig()
+    const transporter = createTransporter()
+
     const body = await request.json()
     const { type, ipAddress, userAgent, pageUrl, referrer, formData, source } = body
 
@@ -171,6 +187,27 @@ export async function POST(request: NextRequest) {
           </p>
         </div>
       `
+    } else if (type === "suggestion") {
+      subject = `Portfolio growth suggestion - ${date}`
+      htmlContent = `
+        <div style="font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: 0 auto;">
+          <h2 style="color: #0a84ff; border-bottom: 2px solid #0a84ff; padding-bottom: 10px;">
+            One thing to help me grow
+          </h2>
+          <div style="background-color: #f3f4f6; padding: 15px; border-radius: 8px; margin-top: 20px;">
+            <p style="margin: 8px 0;"><strong>Who they are:</strong> ${formData?.role || "Not specified"}</p>
+            <p style="margin: 8px 0;"><strong>Email:</strong> ${formData?.email || "Anonymous"}</p>
+            <p style="margin: 8px 0;"><strong>Suggestion:</strong></p>
+            <div style="background-color: white; padding: 10px; border-radius: 4px; margin-top: 5px;">
+              <p style="margin: 0; white-space: pre-wrap;">${formData?.suggestion || "Not provided"}</p>
+            </div>
+          </div>
+          <div style="background-color: #e5e7eb; padding: 15px; border-radius: 8px; margin-top: 15px;">
+            <p style="margin: 8px 0;"><strong>IP:</strong> ${visitorIp}</p>
+            <p style="margin: 8px 0;"><strong>Date:</strong> ${date} · ${time}</p>
+          </div>
+        </div>
+      `
     } else if (type === "form") {
       // Email for form submission
       subject = `New Contact Form Submission - ${date}`
@@ -228,10 +265,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid type" }, { status: 400 })
     }
 
-    // Send email
     const mailOptions = {
-      from: `"Portfolio Website" <${EMAIL_CONFIG.auth.user}>`,
-      to: RECIPIENT_EMAIL,
+      from: `"${mailCfg.fromName}" <${mailCfg.auth.user}>`,
+      to: mailCfg.to,
       subject: subject,
       html: htmlContent,
     }
