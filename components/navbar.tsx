@@ -3,134 +3,131 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
 import ThemeToggle from "@/components/theme-toggle"
 import { Menu, X } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
 
+const navItems = [
+  { name: "Home", href: "/", isRoute: true },
+  { name: "About", href: "#about", isRoute: false },
+  { name: "Skills", href: "#skills", isRoute: false },
+  { name: "Projects", href: "/projects", isRoute: true },
+  { name: "Services", href: "#what-i-can-do", isRoute: false },
+  { name: "Contact", href: "#contact", isRoute: false },
+]
+
 export default function Navbar() {
-  const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const isMobile = useMobile()
   const pathname = usePathname()
 
-  const navItems = [
-    { name: "Home", href: "/", isRoute: true },
-    { name: "About", href: "#about", isRoute: false },
-    { name: "Projects", href: "/projects", isRoute: true },
-    { name: "Services", href: "#what-i-can-do", isRoute: false },
-    { name: "Skills", href: "#skills", isRoute: false },
-    { name: "Contact", href: "#contact", isRoute: false },
-  ]
-
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 10)
-    }
-
-    window.addEventListener("scroll", handleScroll)
-    return () => window.removeEventListener("scroll", handleScroll)
+    const onScroll = () => setIsScrolled(window.scrollY > 12)
+    onScroll()
+    window.addEventListener("scroll", onScroll)
+    return () => window.removeEventListener("scroll", onScroll)
   }, [])
 
-  const handleNavClick = (href: string, isRoute: boolean) => {
+  const goTo = (href: string, isRoute: boolean) => {
     setIsMenuOpen(false)
-    if (isRoute) {
-      // Handle route navigation
-      return
+    if (isRoute) return
+    if (pathname !== "/") {
+      window.location.href = `/${href}`
     } else {
-      // Handle hash navigation
-      if (pathname !== "/") {
-        window.location.href = `/${href}`
-      } else {
-        document.querySelector(href)?.scrollIntoView({ behavior: "smooth" })
-      }
+      document.querySelector(href)?.scrollIntoView({ behavior: "smooth" })
     }
   }
 
   return (
     <>
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled ? "bg-white/90 dark:bg-jungle-900/90 backdrop-blur-sm shadow-sm" : "bg-transparent"
-        }`}
-      >
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16 md:h-20">
-            <div className="flex items-center gap-2">
-              <img src="/pp.jpg" alt="Rohit Parit" className="h-10 w-10 rounded-md" />
-              <div className="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-2">
-                Rohit<span className="text-jungle-500 dark:text-jungle-300">Parit</span>
-                <img src="/icons8-spring-boot.svg" alt="Spring Boot" className="h-5 w-5" />
-              </div>
-            </div>
+      <header className="fixed top-3 md:top-4 left-0 right-0 z-50 px-3 md:px-6 pointer-events-none">
+        <div
+          className={`mx-auto pointer-events-auto transition-all duration-300 max-w-5xl flex items-center justify-between gap-3 ios-glass-strong rounded-full border ${
+            isScrolled ? "shadow-[0_8px_30px_-12px_rgba(0,0,0,0.18)]" : "shadow-sm"
+          } px-3 md:px-4 h-12 md:h-14`}
+        >
+          <Link href="/" className="flex items-center gap-2 pl-1">
+            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-[#0a84ff] to-[#5e5ce6] text-white font-semibold text-sm shadow-[0_4px_10px_-3px_rgba(10,132,255,0.5)]">
+              R
+            </span>
+            <span className="font-semibold tracking-tight text-[15px] hidden sm:block">
+              Rohit<span className="text-[var(--ios-text-muted)]"> · Parit</span>
+            </span>
+          </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-1">
-              {navItems.map((item) =>
-                item.isRoute ? (
-                  <Button
-                    key={item.name}
-                    variant="ghost"
-                    asChild
-                    className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                  >
-                    <Link href={item.href}>{item.name}</Link>
-                  </Button>
-                ) : (
-                  <Button
-                    key={item.name}
-                    variant="ghost"
-                    onClick={() => handleNavClick(item.href, item.isRoute)}
-                    className="text-slate-600 hover:text-slate-900 dark:text-slate-300 dark:hover:text-white"
-                  >
-                    {item.name}
-                  </Button>
-                )
-              )}
-              <ThemeToggle />
-            </nav>
+          <nav className="hidden md:flex items-center gap-1 text-sm font-medium text-[var(--ios-text-muted)]">
+            {navItems.map((item) =>
+              item.isRoute ? (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className="px-3 py-1.5 rounded-full hover:text-[var(--ios-text)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition"
+                >
+                  {item.name}
+                </Link>
+              ) : (
+                <button
+                  key={item.name}
+                  onClick={() => goTo(item.href, item.isRoute)}
+                  className="px-3 py-1.5 rounded-full hover:text-[var(--ios-text)] hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition"
+                >
+                  {item.name}
+                </button>
+              )
+            )}
+          </nav>
 
-            {/* Mobile Navigation Toggle */}
-            <div className="flex items-center md:hidden gap-2">
-              <ThemeToggle />
-              <Button variant="ghost" size="icon" onClick={() => setIsMenuOpen(!isMenuOpen)} aria-label="Toggle menu">
-                {isMenuOpen ? (
-                  <X className="h-6 w-6 text-slate-800 dark:text-white" />
-                ) : (
-                  <Menu className="h-6 w-6 text-slate-800 dark:text-white" />
-                )}
-              </Button>
-            </div>
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <button
+              type="button"
+              onClick={() => setIsMenuOpen((v) => !v)}
+              aria-label="Toggle menu"
+              className="md:hidden inline-flex items-center justify-center h-9 w-9 rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.06] transition"
+            >
+              {isMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+            </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu */}
+      {/* Mobile sheet */}
       {isMenuOpen && isMobile && (
-        <div className="fixed inset-0 z-40 bg-white dark:bg-jungle-900/95 pt-16">
-          <nav className="container mx-auto px-4 py-8 flex flex-col gap-4">
-            {navItems.map((item) =>
-              item.isRoute ? (
-                <Button
-                  key={item.name}
-                  variant="ghost"
-                  asChild
-                  className="w-full justify-start text-lg py-4 text-slate-800 dark:text-white"
-                >
-                  <Link href={item.href}>{item.name}</Link>
-                </Button>
-              ) : (
-                <Button
-                  key={item.name}
-                  variant="ghost"
-                  onClick={() => handleNavClick(item.href, item.isRoute)}
-                  className="w-full justify-start text-lg py-4 text-slate-800 dark:text-white"
-                >
-                  {item.name}
-                </Button>
-              )
-            )}
-          </nav>
+        <div className="fixed inset-0 z-40 pt-24 px-4">
+          <div
+            className="absolute inset-0 bg-black/30 backdrop-blur-sm"
+            onClick={() => setIsMenuOpen(false)}
+          />
+          <div className="relative ios-glass-strong rounded-3xl p-3 shadow-2xl">
+            <nav className="flex flex-col">
+              {navItems.map((item, i) => (
+                <div key={item.name}>
+                  {item.isRoute ? (
+                    <Link
+                      href={item.href}
+                      onClick={() => setIsMenuOpen(false)}
+                      className="flex items-center justify-between px-4 py-3.5 rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+                    >
+                      <span className="font-medium text-[15px]">{item.name}</span>
+                      <span className="text-[var(--ios-text-muted)]">›</span>
+                    </Link>
+                  ) : (
+                    <button
+                      onClick={() => goTo(item.href, item.isRoute)}
+                      className="w-full flex items-center justify-between px-4 py-3.5 rounded-2xl hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+                    >
+                      <span className="font-medium text-[15px]">{item.name}</span>
+                      <span className="text-[var(--ios-text-muted)]">›</span>
+                    </button>
+                  )}
+                  {i < navItems.length - 1 && (
+                    <div className="ios-divider mx-4" />
+                  )}
+                </div>
+              ))}
+            </nav>
+          </div>
         </div>
       )}
     </>

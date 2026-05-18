@@ -1,134 +1,139 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Card, CardContent } from "@/components/ui/card"
-import { Code, Network, Layers, Shield, Workflow } from "lucide-react"
+import {
+  Code,
+  Network,
+  Layers,
+  Shield,
+  Workflow,
+  Server,
+  Sparkles,
+} from "lucide-react"
+import { useTechExperience } from "@/hooks/use-tech-experience"
+
+const techPills = [
+  { name: "Java", icon: Code },
+  { name: "Spring Boot", icon: Server },
+  { name: "REST API", icon: Network },
+  { name: "Microservices", icon: Layers },
+  { name: "JWT", icon: Shield },
+  { name: "Docker / CI", icon: Workflow },
+]
 
 export default function About() {
-  const skills = [
-    { 
-      name: "Java", 
-      icon: <Code className="h-8 w-8 text-orange-600 dark:text-orange-400" />, 
-      color: "bg-orange-100 dark:bg-orange-900" 
-    },
-    { 
-      name: "Spring Boot", 
-      icon: <img src="/icons8-spring-boot.svg" alt="Spring Boot" className="h-8 w-8" />, 
-      color: "bg-green-100 dark:bg-green-900" 
-    },
-    { 
-      name: "REST API", 
-      icon: <Network className="h-8 w-8 text-blue-600 dark:text-blue-400" />, 
-      color: "bg-blue-100 dark:bg-blue-900" 
-    },
-    { 
-      name: "Microservices", 
-      icon: <Layers className="h-8 w-8 text-purple-600 dark:text-purple-400" />, 
-      color: "bg-purple-100 dark:bg-purple-900" 
-    },
-    { 
-      name: "JWT", 
-      icon: <Shield className="h-8 w-8 text-red-600 dark:text-red-400" />, 
-      color: "bg-red-100 dark:bg-red-900" 
-    },
-    { 
-      name: "Docker/CI/CD", 
-      icon: <Workflow className="h-8 w-8 text-cyan-600 dark:text-cyan-400" />, 
-      color: "bg-cyan-100 dark:bg-cyan-900" 
-    },
-  ]
+  const techExp = useTechExperience()
 
   return (
-    <section id="about" className="py-20 bg-white dark:bg-jungle-950 relative overflow-hidden">
-      {/* Jungle background decoration */}
-      <div className="absolute inset-0 opacity-5 pointer-events-none">
-        <div
-          className="absolute inset-0 bg-contain"
-          style={{
-            backgroundImage: `url('/images/django-jungle.png')`,
-            backgroundPosition: "center",
-            backgroundSize: "80%",
-            backgroundRepeat: "no-repeat",
-            filter: "blur(2px)",
-          }}
-        />
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
+    <section id="about" className="py-24 bg-white dark:bg-[#0d0d0f] relative">
+      <div className="container mx-auto px-4 md:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-2xl mx-auto mb-14"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-4 flex items-center justify-center gap-2">
-            <img src="/icons8-spring-boot.svg" alt="Spring Boot" className="h-8 w-8" />
-            About Me
-            <img src="/icons8-spring-boot.svg" alt="Spring Boot" className="h-8 w-8" />
+          <p className="ios-section-eyebrow">About</p>
+          <h2 className="ios-section-title mt-2">
+            Engineer who ships.
           </h2>
-          <div className="h-1 w-20 bg-jungle-500 mx-auto"></div>
+          <p className="mt-4 text-[17px] text-[var(--ios-text-muted)] leading-relaxed">
+            I’m Rohit Parit — a Java developer focused on building reliable,
+            performant backends and the products around them.
+          </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 max-w-6xl mx-auto">
+          {/* Avatar card */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="lg:col-span-5"
           >
-            <div className="aspect-square max-w-md mx-auto bg-gradient-to-b from-jungle-800/50 to-jungle-950/50 rounded-lg overflow-hidden relative">
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center"
-                animate={{ rotate: [0, 5, 0, -5, 0] }}
-                transition={{ duration: 10, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-              >
+            <div className="ios-card p-6 h-full">
+              <div className="relative aspect-square rounded-2xl overflow-hidden bg-gradient-to-br from-[#0a84ff]/12 via-[#5e5ce6]/10 to-[#af52de]/12">
                 <img
-                  src="images/kihuni.png"
-                  alt="Rohit Parit - Java Developer"
-                  className="w-full h-full object-contain p-4 rounded-full"
+                  src="/pp.jpg"
+                  alt="Rohit Parit"
+                  className="absolute inset-0 w-full h-full object-cover"
                 />
-              </motion.div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-jungle-900/90 to-transparent p-6">
-                <h3 className="text-white text-xl font-bold">Rohit Parit</h3>
-                <p className="text-jungle-200">Java Developer</p>
+                <div className="absolute inset-x-0 bottom-0 p-5 bg-gradient-to-t from-black/55 to-transparent text-white">
+                  <div className="text-lg font-semibold tracking-tight">Rohit Parit</div>
+                  <div className="text-sm opacity-90">Java · Spring Boot · MongoDB</div>
+                </div>
+              </div>
+
+              <div className="mt-5 grid grid-cols-3 gap-3">
+                <Stat k="160+" v="LeetCode" />
+                <Stat k="5+" v="Products" />
+                <Stat k={techExp?.shortLabel ?? "—"} v="Experience" />
               </div>
             </div>
           </motion.div>
 
+          {/* Story + tech pills */}
           <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="space-y-6"
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="lg:col-span-7"
           >
-            <p className="text-lg text-slate-700 dark:text-slate-300">
-              I'm Rohit Parit — a Java Developer currently working at Amdox Technologies, with experience building 
-              full-stack Java applications, REST APIs, and microservices architecture.
-            </p>
-            <p className="text-lg text-slate-700 dark:text-slate-300">
-              I specialize in Spring Boot, Spring Data JPA, JWT authentication, microservices architecture, 
-              CI/CD pipelines, and DevOps practices. I've worked on projects like Eventura, Gold Loan Management System, and FormFree.
-            </p>
-            <p className="text-lg text-slate-700 dark:text-slate-300">
-              Currently pursuing Master of Computer Application at Manipal University Jaipur. I've solved 160+ questions on LeetCode 
-              and continuously improving my skills in Java full-stack development.
-            </p>
+            <div className="ios-card p-7 md:p-9 h-full">
+              <div className="inline-flex items-center gap-2 ios-chip mb-4">
+                <Sparkles className="h-3.5 w-3.5" /> A bit about me
+              </div>
+              <div className="space-y-4 text-[16px] leading-relaxed text-[var(--ios-text)]">
+                <p>
+                  Currently a Backend Java Developer at <strong>Debound</strong>,
+                  leading the migration of Bank of Maharashtra’s legacy PHP stack to
+                  a modern Java ecosystem with REST APIs.
+                </p>
+                <p className="text-[var(--ios-text-muted)]">
+                  I specialise in Spring Boot, Spring Security &amp; JWT, microservices,
+                  CI/CD, and DevOps. Recent work includes{" "}
+                  <strong>NainiStore</strong> — a hyperlocal marketplace running on
+                  Spring Boot &amp; MongoDB — and{" "}
+                  <strong>ClearPack PackIQ Copilot</strong>, a RAG-powered backend
+                  for factory technicians.
+                </p>
+                <p className="text-[var(--ios-text-muted)]">
+                  Pursuing MCA at Manipal University Jaipur. Always learning,
+                  always shipping.
+                </p>
+              </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 pt-4">
-              {skills.map((skill, index) => (
-                <Card key={index} className={`border-none ${skill.color}`}>
-                  <CardContent className="p-4 flex flex-col items-center justify-center text-center">
-                    <div className="mb-2">{skill.icon}</div>
-                    <span className="font-medium text-slate-800 dark:text-white">{skill.name}</span>
-                  </CardContent>
-                </Card>
-              ))}
+              <div className="mt-7 grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                {techPills.map(({ name, icon: Icon }) => (
+                  <div
+                    key={name}
+                    className="flex items-center gap-2 rounded-2xl border border-[var(--ios-separator)] bg-[var(--ios-bg)] dark:bg-white/[0.04] px-3 py-2.5 text-sm font-medium"
+                  >
+                    <span className="inline-flex h-7 w-7 items-center justify-center rounded-lg bg-[#0a84ff]/10 text-[#0a84ff]">
+                      <Icon className="h-3.5 w-3.5" />
+                    </span>
+                    {name}
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
       </div>
     </section>
+  )
+}
+
+function Stat({ k, v }: { k: string; v: string }) {
+  return (
+    <div className="rounded-2xl border border-[var(--ios-separator)] bg-[var(--ios-bg)] dark:bg-white/[0.04] p-3 text-center">
+      <div className="text-xl font-semibold tracking-tight">{k}</div>
+      <div className="text-[11px] uppercase tracking-wider text-[var(--ios-text-muted)] mt-0.5">
+        {v}
+      </div>
+    </div>
   )
 }

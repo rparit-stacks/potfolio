@@ -2,14 +2,9 @@
 
 import { useState, useMemo } from "react"
 import { motion } from "framer-motion"
-import Hero from "@/components/hero"
-import Projects from "@/components/projects"
+import Link from "next/link"
 import Footer from "@/components/footer"
-import { projectsData, getPrimarySkills, getAllSkills, type Project } from "@/lib/projects-data"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { projectsData, getPrimarySkills, type Project } from "@/lib/projects-data"
 import {
   Dialog,
   DialogContent,
@@ -18,501 +13,325 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { ExternalLink, Github, Code, Database, Shield, Mail, Layers, Search, X, Package, KeyRound } from "lucide-react"
+import {
+  Search,
+  X,
+  Github,
+  ExternalLink,
+  ArrowLeft,
+  Code,
+  Database,
+  Shield,
+  Layers,
+  KeyRound,
+  Package,
+} from "lucide-react"
 
 export default function ProjectsPage() {
-  const [selectedProject, setSelectedProject] = useState<number | null>(null)
-  const [selectedPrimarySkill, setSelectedPrimarySkill] = useState<string>("All")
-  const [searchQuery, setSearchQuery] = useState<string>("")
+  const [selected, setSelected] = useState<number | null>(null)
+  const [activeSkill, setActiveSkill] = useState<string>("All")
+  const [q, setQ] = useState("")
 
   const primarySkills = getPrimarySkills()
-  const allSkills = getAllSkills()
 
-  const filteredProjects = useMemo(() => {
-    let filtered = projectsData
-
-    // Filter by primary skill
-    if (selectedPrimarySkill !== "All") {
-      filtered = filtered.filter((project) => project.primarySkill === selectedPrimarySkill)
-    }
-
-    // Filter by search query
-    if (searchQuery.trim()) {
-      const query = searchQuery.toLowerCase()
-      filtered = filtered.filter(
-        (project) =>
-          project.title.toLowerCase().includes(query) ||
-          project.description.toLowerCase().includes(query) ||
-          project.skills.some((skill) => skill.toLowerCase().includes(query)) ||
-          project.primarySkill.toLowerCase().includes(query)
+  const filtered = useMemo(() => {
+    let list: Project[] = projectsData
+    if (activeSkill !== "All") list = list.filter((p) => p.primarySkill === activeSkill)
+    if (q.trim()) {
+      const needle = q.toLowerCase()
+      list = list.filter(
+        (p) =>
+          p.title.toLowerCase().includes(needle) ||
+          p.description.toLowerCase().includes(needle) ||
+          p.skills.some((s) => s.toLowerCase().includes(needle)) ||
+          p.primarySkill.toLowerCase().includes(needle)
       )
     }
-
-    return filtered
-  }, [selectedPrimarySkill, searchQuery])
+    return list
+  }, [activeSkill, q])
 
   return (
-    <main className="min-h-screen">
-      <Hero />
-
-      {/* Filters Section */}
-      <section className="py-12 bg-white dark:bg-jungle-950 border-b border-slate-200 dark:border-jungle-800">
-        <div className="container mx-auto px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="space-y-6"
+    <main className="min-h-screen bg-[var(--ios-bg)]">
+      {/* Header / filters */}
+      <section className="pt-32 pb-10 bg-white dark:bg-[#0d0d0f] border-b border-[var(--ios-separator)]">
+        <div className="container mx-auto px-4 md:px-6">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-1.5 text-sm text-[var(--ios-text-muted)] hover:text-[#0a84ff] transition mb-6"
           >
-            <div>
-              <h2 className="text-2xl md:text-3xl font-bold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
-                <img src="/icons8-spring-boot.svg" alt="Spring Boot" className="h-6 w-6" />
-                Filter Projects
-              </h2>
-            </div>
+            <ArrowLeft className="h-4 w-4" /> Back home
+          </Link>
 
-            {/* Search Bar */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-slate-400" />
-              <Input
+          <div className="max-w-3xl">
+            <p className="ios-section-eyebrow">All projects</p>
+            <h1 className="ios-section-title mt-2">Everything I’ve shipped.</h1>
+            <p className="mt-3 text-[16.5px] text-[var(--ios-text-muted)] leading-relaxed">
+              Search by title, description, skill or filter by primary tech.
+            </p>
+          </div>
+
+          <div className="mt-7 max-w-2xl">
+            <div className="flex items-center gap-2 rounded-2xl border border-[var(--ios-separator)] bg-white dark:bg-white/[0.04] px-4 py-3 focus-within:border-[#0a84ff] transition">
+              <Search className="h-4 w-4 text-[var(--ios-text-muted)]" />
+              <input
                 type="text"
-                placeholder="Search projects by name, description, or skills..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-10 pr-10 h-12 text-base"
+                placeholder="Search projects…"
+                value={q}
+                onChange={(e) => setQ(e.target.value)}
+                className="flex-1 bg-transparent outline-none text-[15px] placeholder:text-[var(--ios-text-muted)]"
               />
-              {searchQuery && (
+              {q && (
                 <button
-                  onClick={() => setSearchQuery("")}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                  onClick={() => setQ("")}
+                  className="text-[var(--ios-text-muted)] hover:text-[var(--ios-text)]"
+                  aria-label="Clear search"
                 >
-                  <X className="h-5 w-5" />
+                  <X className="h-4 w-4" />
                 </button>
               )}
             </div>
+          </div>
 
-            {/* Primary Skill Filter */}
-            <div>
-              <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3">
-                Filter by Primary Skill
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                <Button
-                  variant={selectedPrimarySkill === "All" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => setSelectedPrimarySkill("All")}
-                  className={
-                    selectedPrimarySkill === "All"
-                      ? "bg-jungle-600 hover:bg-jungle-700 text-white"
-                      : "border-jungle-200 dark:border-jungle-700"
-                  }
-                >
-                  All
-                </Button>
-                {primarySkills.map((skill) => (
-                  <Button
-                    key={skill}
-                    variant={selectedPrimarySkill === skill ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setSelectedPrimarySkill(skill)}
-                    className={
-                      selectedPrimarySkill === skill
-                        ? "bg-jungle-600 hover:bg-jungle-700 text-white"
-                        : "border-jungle-200 dark:border-jungle-700"
-                    }
-                  >
-                    {skill}
-                  </Button>
-                ))}
-              </div>
-            </div>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <SkillBtn label="All" active={activeSkill === "All"} onClick={() => setActiveSkill("All")} />
+            {primarySkills.map((s) => (
+              <SkillBtn
+                key={s}
+                label={s}
+                active={activeSkill === s}
+                onClick={() => setActiveSkill(s)}
+              />
+            ))}
+          </div>
 
-            {/* Results Count */}
-            <div className="text-slate-600 dark:text-slate-300">
-              Showing <span className="font-semibold text-jungle-600 dark:text-jungle-400">{filteredProjects.length}</span>{" "}
-              project{filteredProjects.length !== 1 ? "s" : ""}
-            </div>
-          </motion.div>
+          <div className="mt-5 text-sm text-[var(--ios-text-muted)]">
+            Showing <span className="font-semibold text-[#0a84ff]">{filtered.length}</span>{" "}
+            project{filtered.length !== 1 ? "s" : ""}
+          </div>
         </div>
       </section>
 
-      {/* Projects Grid */}
-      <section className="py-20 bg-slate-50 dark:bg-jungle-900/30">
-        <div className="container mx-auto px-4">
-          {filteredProjects.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-xl text-slate-600 dark:text-slate-300">
-                No projects found matching your criteria.
-              </p>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setSelectedPrimarySkill("All")
-                  setSearchQuery("")
-                }}
-                className="mt-4 border-jungle-200 dark:border-jungle-700"
-              >
-                Clear Filters
-              </Button>
+      {/* Grid */}
+      <section className="py-16">
+        <div className="container mx-auto px-4 md:px-6">
+          {filtered.length === 0 ? (
+            <div className="text-center py-20 max-w-md mx-auto">
+              <div className="ios-card p-8">
+                <p className="text-[15px] text-[var(--ios-text)]">No projects match your filters.</p>
+                <button
+                  onClick={() => {
+                    setActiveSkill("All")
+                    setQ("")
+                  }}
+                  className="ios-button-secondary text-sm py-2 mt-4"
+                >
+                  Clear filters
+                </button>
+              </div>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {filteredProjects.map((project, index) => (
-                <motion.div
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+              {filtered.map((project, i) => (
+                <motion.article
                   key={project.id}
-                  initial={{ opacity: 0, y: 20 }}
+                  initial={{ opacity: 0, y: 18 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.5, delay: index * 0.1 }}
+                  transition={{ duration: 0.4, delay: i * 0.04 }}
+                  className="ios-card overflow-hidden group flex flex-col"
                 >
-                  <Card className="h-full flex flex-col overflow-hidden border-slate-200 dark:border-jungle-800 hover:shadow-lg transition-shadow duration-300 dark:bg-jungle-800/30">
-                    <div className="aspect-video w-full overflow-hidden bg-slate-100 dark:bg-jungle-800 relative group">
-                      <img
-                        src={project.image || "/placeholder.svg"}
-                        alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-jungle-900/70 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  <div className="relative aspect-[16/10] w-full overflow-hidden bg-[var(--ios-bg)]">
+                    <img
+                      src={project.image || "/placeholder.svg"}
+                      alt={project.title}
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+                    />
+                    <div className="absolute top-3 left-3">
+                      <span className="ios-chip backdrop-blur-md bg-white/70 dark:bg-black/40">
+                        {project.primarySkill}
+                      </span>
                     </div>
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-2">
-                        <CardTitle className="text-xl text-slate-800 dark:text-white">{project.title}</CardTitle>
-                        <Badge className="bg-jungle-500 text-white text-xs">
-                          {project.primarySkill}
-                        </Badge>
-                      </div>
-                      <div className="flex flex-wrap gap-2 mt-2">
-                        {project.techStack.slice(0, 4).map((tech, i) => (
-                          <Badge
-                            key={i}
-                            variant="secondary"
-                            className="bg-jungle-100 dark:bg-jungle-700/50 text-jungle-800 dark:text-jungle-200"
-                          >
-                            {tech}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardHeader>
-                    <CardContent className="flex-grow">
-                      <CardDescription className="text-slate-600 dark:text-slate-300 text-base">
-                        {project.description}
-                      </CardDescription>
-                    </CardContent>
-                    <CardFooter className="flex gap-2 pt-2 flex-wrap">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setSelectedProject(index)}
-                        className="border-jungle-200 dark:border-jungle-700 flex-1"
-                      >
-                        <Code className="h-4 w-4 mr-1" /> View Details
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        asChild
-                        className="border-jungle-200 dark:border-jungle-700"
-                      >
-                        <a href={project.github} target="_blank" rel="noopener noreferrer">
-                          <Github className="h-4 w-4 mr-1" /> GitHub
-                        </a>
-                      </Button>
-                      {project.demo && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                          className="border-jungle-200 dark:border-jungle-700"
+                  </div>
+                  <div className="p-5 flex-1 flex flex-col">
+                    <h3 className="text-lg font-semibold tracking-tight">{project.title}</h3>
+                    <p className="mt-2 text-sm text-[var(--ios-text-muted)] leading-relaxed line-clamp-3">
+                      {project.description}
+                    </p>
+                    <div className="mt-4 flex flex-wrap gap-1.5">
+                      {project.techStack.slice(0, 4).map((t) => (
+                        <span
+                          key={t}
+                          className="text-[11px] font-medium px-2 py-1 rounded-md bg-[var(--ios-bg)] dark:bg-white/[0.06] text-[var(--ios-text-muted)] border border-[var(--ios-separator)]"
                         >
-                          <a href={project.demo} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-4 w-4 mr-1" /> Storefront
-                          </a>
-                        </Button>
-                      )}
-                      {project.blog && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                          className="border-jungle-200 dark:border-jungle-700"
-                        >
-                          <a href={project.blog} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-4 w-4 mr-1" /> Admin Panel
-                          </a>
-                        </Button>
-                      )}
-                      {project.extraLinks?.map((link) => (
-                        <Button
-                          key={link.url}
-                          variant="outline"
-                          size="sm"
-                          asChild
-                          className="border-jungle-200 dark:border-jungle-700"
-                        >
-                          <a href={link.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-4 w-4 mr-1" /> {link.label}
-                          </a>
-                        </Button>
+                          {t}
+                        </span>
                       ))}
-                      {project.adminCredentials && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                          className="border-jungle-200 dark:border-jungle-700"
+                    </div>
+                    <div className="mt-5 flex items-center gap-2">
+                      <button
+                        onClick={() => setSelected(i)}
+                        className="flex-1 ios-button-primary text-sm py-2"
+                      >
+                        Details
+                      </button>
+                      <a
+                        href={project.github}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full ios-glass hover:text-[#0a84ff] transition"
+                        aria-label="GitHub"
+                      >
+                        <Github className="h-4 w-4" />
+                      </a>
+                      {project.demo && (
+                        <a
+                          href={project.demo}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex h-9 w-9 items-center justify-center rounded-full ios-glass hover:text-[#0a84ff] transition"
+                          aria-label="Open demo"
                         >
-                          <a href={project.adminCredentials.loginUrl} target="_blank" rel="noopener noreferrer">
-                            <KeyRound className="h-4 w-4 mr-1" /> Admin (Pass: {project.adminCredentials.password})
-                          </a>
-                        </Button>
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
                       )}
-                      {project.docker && (
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          asChild
-                          className="border-jungle-200 dark:border-jungle-700"
-                        >
-                          <a href={project.docker} target="_blank" rel="noopener noreferrer">
-                            <Package className="h-4 w-4 mr-1" /> Docker
-                          </a>
-                        </Button>
-                      )}
-                    </CardFooter>
-                  </Card>
-                </motion.div>
+                    </div>
+                  </div>
+                </motion.article>
               ))}
             </div>
           )}
         </div>
       </section>
 
-      {/* Project Details Dialog */}
-      {selectedProject !== null && filteredProjects[selectedProject] && (
-        <Dialog open={selectedProject !== null} onOpenChange={() => setSelectedProject(null)}>
-          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
-            <DialogHeader>
-              <div className="flex items-center gap-4 mb-4">
-                <img
-                  src={filteredProjects[selectedProject].image}
-                  alt={filteredProjects[selectedProject].title}
-                  className="w-20 h-20 rounded-lg object-cover"
-                />
-                <div>
-                  <DialogTitle className="text-2xl">{filteredProjects[selectedProject].title}</DialogTitle>
-                  <DialogDescription className="text-base mt-2">
-                    {filteredProjects[selectedProject].detailedDescription}
-                  </DialogDescription>
-                </div>
-              </div>
-            </DialogHeader>
-
-            <div className="space-y-6 mt-4">
-              {/* Technologies */}
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                  <Code className="h-5 w-5 text-jungle-500" />
-                  Technologies Used
-                </h3>
-                <div className="flex flex-wrap gap-2">
-                  {filteredProjects[selectedProject].technologies.map((tech, i) => (
-                    <Badge
-                      key={i}
-                      variant="secondary"
-                      className="bg-jungle-100 dark:bg-jungle-700/50 text-jungle-800 dark:text-jungle-200"
-                    >
-                      {tech}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-
-              {/* Key Features */}
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                  <Layers className="h-5 w-5 text-jungle-500" />
-                  Key Features
-                </h3>
-                <ul className="space-y-2">
-                  {filteredProjects[selectedProject].keyFeatures.map((feature, i) => (
-                    <li key={i} className="text-slate-600 dark:text-slate-300 flex items-start gap-2">
-                      <span className="text-jungle-500 mt-1">•</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Features */}
-              <div>
-                <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                  <Database className="h-5 w-5 text-jungle-500" />
-                  Features
-                </h3>
-                <ul className="space-y-2">
-                  {filteredProjects[selectedProject].features.map((feature, i) => (
-                    <li key={i} className="text-slate-600 dark:text-slate-300 flex items-start gap-2">
-                      <span className="text-jungle-500 mt-1">✓</span>
-                      <span>{feature}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-
-              {/* Entities */}
-              {filteredProjects[selectedProject].entities && (
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                    <Shield className="h-5 w-5 text-jungle-500" />
-                    Core Entities
+      {selected !== null && filtered[selected] && (
+        <Dialog open={selected !== null} onOpenChange={() => setSelected(null)}>
+          <DialogContent className="max-w-3xl max-h-[88vh] overflow-y-auto bg-white dark:bg-[#1c1c1e] border border-[var(--ios-separator)] rounded-3xl p-0">
+            <div>
+              <div className="relative aspect-[16/8] w-full overflow-hidden bg-[var(--ios-bg)]">
+                <img src={filtered[selected].image} alt={filtered[selected].title} className="w-full h-full object-cover" />
+                <div className="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/70 to-transparent text-white">
+                  <span className="ios-chip backdrop-blur bg-white/15 text-white border-white/20">
+                    {filtered[selected].primarySkill}
+                  </span>
+                  <h3 className="mt-3 text-2xl md:text-3xl font-semibold tracking-tight">
+                    {filtered[selected].title}
                   </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {filteredProjects[selectedProject].entities?.map((entity, i) => (
-                      <Badge
-                        key={i}
-                        variant="outline"
-                        className="border-jungle-300 dark:border-jungle-600 text-jungle-700 dark:text-jungle-300"
-                      >
-                        {entity}
-                      </Badge>
+                </div>
+              </div>
+
+              <div className="p-6 md:p-8 space-y-7">
+                <DialogHeader className="space-y-2">
+                  <DialogTitle className="sr-only">{filtered[selected].title}</DialogTitle>
+                  <DialogDescription className="text-[15px] leading-relaxed text-[var(--ios-text)]">
+                    {filtered[selected].detailedDescription}
+                  </DialogDescription>
+                </DialogHeader>
+
+                <Sec icon={Code} title="Technologies">
+                  <div className="flex flex-wrap gap-1.5">
+                    {filtered[selected].technologies.map((t) => (
+                      <span key={t} className="ios-chip">
+                        {t}
+                      </span>
                     ))}
                   </div>
-                </div>
-              )}
+                </Sec>
 
-              {/* API Endpoints */}
-              {filteredProjects[selectedProject].apiEndpoints && (
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                    <Code className="h-5 w-5 text-jungle-500" />
-                    API Endpoints
-                  </h3>
+                <Sec icon={Layers} title="Key features">
                   <ul className="space-y-2">
-                    {filteredProjects[selectedProject].apiEndpoints?.map((endpoint, i) => (
-                      <li key={i} className="text-slate-600 dark:text-slate-300 font-mono text-sm bg-slate-100 dark:bg-slate-800 p-2 rounded">
-                        {endpoint}
+                    {filtered[selected].keyFeatures.map((f, i) => (
+                      <li key={i} className="flex gap-3 text-[15px] text-[var(--ios-text-muted)]">
+                        <span className="text-[#0a84ff] mt-1">›</span>
+                        <span>{f}</span>
                       </li>
                     ))}
                   </ul>
-                </div>
-              )}
+                </Sec>
 
-              {/* Video Tutorial */}
-              {filteredProjects[selectedProject].videoTutorial && (
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                    <Mail className="h-5 w-5 text-jungle-500" />
-                    Video Tutorial
-                  </h3>
-                  <a
-                    href={filteredProjects[selectedProject].videoTutorial}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-jungle-600 dark:text-jungle-400 hover:underline flex items-center gap-2"
-                  >
-                    <ExternalLink className="h-4 w-4" />
-                    Watch Project Explanation Video
-                  </a>
-                </div>
-              )}
-
-              {/* Links */}
-              {(filteredProjects[selectedProject].demo ||
-                filteredProjects[selectedProject].blog ||
-                filteredProjects[selectedProject].extraLinks?.length) && (
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                    <ExternalLink className="h-5 w-5 text-jungle-500" />
-                    Links
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {filteredProjects[selectedProject].demo && (
-                      <Button variant="outline" asChild className="border-jungle-200 dark:border-jungle-700">
-                        <a href={filteredProjects[selectedProject].demo!} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4 mr-2" /> Storefront
-                        </a>
-                      </Button>
-                    )}
-                    {filteredProjects[selectedProject].blog && (
-                      <Button variant="outline" asChild className="border-jungle-200 dark:border-jungle-700">
-                        <a href={filteredProjects[selectedProject].blog!} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4 mr-2" /> Admin Panel
-                        </a>
-                      </Button>
-                    )}
-                    {filteredProjects[selectedProject].extraLinks?.map((link) => (
-                      <Button key={link.url} variant="outline" asChild className="border-jungle-200 dark:border-jungle-700">
-                        <a href={link.url} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4 mr-2" /> {link.label}
-                        </a>
-                      </Button>
+                <Sec icon={Database} title="Features">
+                  <ul className="space-y-2">
+                    {filtered[selected].features.map((f, i) => (
+                      <li key={i} className="flex gap-3 text-[15px] text-[var(--ios-text-muted)]">
+                        <span className="text-emerald-500 mt-1">✓</span>
+                        <span>{f}</span>
+                      </li>
                     ))}
-                  </div>
-                </div>
-              )}
+                  </ul>
+                </Sec>
 
-              {/* Admin Credentials */}
-              {filteredProjects[selectedProject].adminCredentials && (
-                <div>
-                  <h3 className="text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-                    <KeyRound className="h-5 w-5 text-jungle-500" />
-                    Admin Credentials
-                  </h3>
-                  <div className="space-y-2 text-slate-600 dark:text-slate-300">
-                    <div>
-                      <span className="font-semibold text-slate-700 dark:text-slate-200">Email:</span>{" "}
-                      {filteredProjects[selectedProject].adminCredentials.email}
+                {filtered[selected].entities && filtered[selected].entities!.length > 0 && (
+                  <Sec icon={Shield} title="Core entities">
+                    <div className="flex flex-wrap gap-1.5">
+                      {filtered[selected].entities!.map((e) => (
+                        <span
+                          key={e}
+                          className="text-[12px] font-medium px-2.5 py-1 rounded-md bg-[var(--ios-bg)] dark:bg-white/[0.06] border border-[var(--ios-separator)]"
+                        >
+                          {e}
+                        </span>
+                      ))}
                     </div>
-                    <div>
-                      <span className="font-semibold text-slate-700 dark:text-slate-200">Password:</span>{" "}
-                      {filteredProjects[selectedProject].adminCredentials.password}
-                    </div>
-                    {filteredProjects[selectedProject].adminCredentials.note && (
-                      <div className="text-sm text-slate-500 dark:text-slate-400">
-                        {filteredProjects[selectedProject].adminCredentials.note}
-                      </div>
-                    )}
-                    <Button variant="outline" asChild className="border-jungle-200 dark:border-jungle-700">
+                  </Sec>
+                )}
+
+                {filtered[selected].apiEndpoints && filtered[selected].apiEndpoints!.length > 0 && (
+                  <Sec icon={Code} title="API endpoints">
+                    <ul className="space-y-1.5">
+                      {filtered[selected].apiEndpoints!.map((e, i) => (
+                        <li
+                          key={i}
+                          className="font-mono text-[12.5px] bg-[var(--ios-bg)] dark:bg-white/[0.05] border border-[var(--ios-separator)] rounded-lg px-3 py-2"
+                        >
+                          {e}
+                        </li>
+                      ))}
+                    </ul>
+                  </Sec>
+                )}
+
+                {filtered[selected].adminCredentials && (
+                  <Sec icon={KeyRound} title="Admin credentials">
+                    <div className="rounded-2xl border border-[var(--ios-separator)] bg-[var(--ios-bg)] dark:bg-white/[0.04] p-4 space-y-1.5 text-sm">
+                      <div><span className="text-[var(--ios-text-muted)]">Email:</span> {filtered[selected].adminCredentials!.email}</div>
+                      <div><span className="text-[var(--ios-text-muted)]">Password:</span> {filtered[selected].adminCredentials!.password}</div>
+                      {filtered[selected].adminCredentials!.note && (
+                        <div className="text-[12.5px] text-[var(--ios-text-muted)] pt-1">
+                          {filtered[selected].adminCredentials!.note}
+                        </div>
+                      )}
                       <a
-                        href={filteredProjects[selectedProject].adminCredentials.loginUrl}
+                        href={filtered[selected].adminCredentials!.loginUrl}
                         target="_blank"
                         rel="noopener noreferrer"
+                        className="ios-button-primary text-sm py-2 inline-flex items-center gap-2 mt-3"
                       >
-                        <KeyRound className="h-4 w-4 mr-2" /> Open Admin Login
+                        <KeyRound className="h-3.5 w-3.5" /> Open admin
                       </a>
-                    </Button>
-                  </div>
-                </div>
-              )}
-            </div>
+                    </div>
+                  </Sec>
+                )}
 
-            <DialogFooter className="mt-6">
-              <Button
-                variant="outline"
-                onClick={() => setSelectedProject(null)}
-                className="border-jungle-200 dark:border-jungle-700"
-              >
-                Close
-              </Button>
-              {filteredProjects[selectedProject].docker && (
-                <Button
-                  variant="outline"
-                  asChild
-                  className="border-jungle-200 dark:border-jungle-700"
-                >
-                  <a href={filteredProjects[selectedProject].docker!} target="_blank" rel="noopener noreferrer">
-                    <Package className="h-4 w-4 mr-2" /> Docker
+                <DialogFooter className="!justify-between flex-wrap gap-2 pt-2">
+                  {filtered[selected].docker && (
+                    <a
+                      href={filtered[selected].docker!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ios-button-secondary text-sm py-2 inline-flex items-center gap-2"
+                    >
+                      <Package className="h-3.5 w-3.5" /> Docker
+                    </a>
+                  )}
+                  <a
+                    href={filtered[selected].github}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="ios-button-primary text-sm py-2 inline-flex items-center gap-2 ml-auto"
+                  >
+                    <Github className="h-3.5 w-3.5" /> View on GitHub
                   </a>
-                </Button>
-              )}
-              <Button
-                asChild
-                className="bg-jungle-600 hover:bg-jungle-700 text-white"
-              >
-                <a href={filteredProjects[selectedProject].github} target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-2" /> View on GitHub
-                </a>
-              </Button>
-            </DialogFooter>
+                </DialogFooter>
+              </div>
+            </div>
           </DialogContent>
         </Dialog>
       )}
@@ -522,3 +341,45 @@ export default function ProjectsPage() {
   )
 }
 
+function SkillBtn({
+  label,
+  active,
+  onClick,
+}: {
+  label: string
+  active: boolean
+  onClick: () => void
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className={`inline-flex items-center rounded-full px-3.5 py-1.5 text-sm font-medium transition border ${
+        active
+          ? "bg-[#0a84ff] text-white border-transparent shadow-[0_6px_18px_-8px_rgba(10,132,255,0.6)]"
+          : "ios-glass text-[var(--ios-text)] border-transparent hover:bg-black/[0.04] dark:hover:bg-white/[0.06]"
+      }`}
+    >
+      {label}
+    </button>
+  )
+}
+
+function Sec({
+  icon: Icon,
+  title,
+  children,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  title: string
+  children: React.ReactNode
+}) {
+  return (
+    <section>
+      <h4 className="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-[var(--ios-text-muted)] mb-3">
+        <Icon className="h-4 w-4 text-[#0a84ff]" />
+        {title}
+      </h4>
+      {children}
+    </section>
+  )
+}

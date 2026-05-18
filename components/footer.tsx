@@ -1,73 +1,58 @@
 import { Github, Linkedin, Mail, Container } from "lucide-react"
 
 export default function Footer() {
-  const currentYear = new Date().getFullYear()
+  const year = new Date().getFullYear()
 
   return (
-    <footer className="py-8 bg-jungle-900 text-slate-300 relative overflow-hidden">
-      {/* Jungle silhouette at the bottom */}
-      <div className="absolute bottom-0 left-0 right-0 h-16 opacity-20">
-        <div
-          className="w-full h-full bg-bottom bg-repeat-x"
-          style={{
-            backgroundImage: `url('/images/django-jungle.png')`,
-            backgroundSize: "auto 100%",
-          }}
-        />
-      </div>
-
-      <div className="container mx-auto px-4 relative z-10">
-        <div className="flex flex-col md:flex-row justify-between items-center">
-          <div className="mb-4 md:mb-0 flex items-center gap-3">
-            <img src="/placeholder-user.jpg" alt="Rohit Parit" className="h-10 w-10 rounded-md" />
+    <footer className="py-10 bg-white dark:bg-[#0d0d0f] border-t border-[var(--ios-separator)]">
+      <div className="container mx-auto px-4 md:px-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <span className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#0a84ff] to-[#5e5ce6] text-white font-semibold text-sm shadow-[0_4px_10px_-3px_rgba(10,132,255,0.5)]">
+              R
+            </span>
             <div>
-              <p className="text-lg font-semibold flex items-center gap-2">
-                Rohit Parit <img src="/icons8-spring-boot.svg" alt="Spring Boot" className="h-5 w-5" />
-              </p>
-              <p className="text-sm text-jungle-400">Java Developer</p>
+              <div className="font-semibold tracking-tight text-[15px]">Rohit Parit</div>
+              <div className="text-[12.5px] text-[var(--ios-text-muted)]">
+                Java · Spring Boot · Backend engineer
+              </div>
             </div>
           </div>
 
-          <div className="flex gap-4 mb-4 md:mb-0">
-            <a
-              href="https://www.linkedin.com/in/rparit1934/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-full hover:bg-jungle-800 transition-colors"
-              aria-label="LinkedIn"
-            >
-              <Linkedin className="h-5 w-5" />
-            </a>
-            <a
-              href="https://github.com/rparit-stacks"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-full hover:bg-jungle-800 transition-colors"
-              aria-label="GitHub"
-            >
-              <Github className="h-5 w-5" />
-            </a>
-            <a
-              href="https://hub.docker.com/u/rparit1934"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="p-2 rounded-full hover:bg-jungle-800 transition-colors"
-              aria-label="Docker"
-            >
-              <Container className="h-5 w-5" />
-            </a>
-            <a
-              href="mailto:rohitparit1934@gmail.com"
-              className="p-2 rounded-full hover:bg-jungle-800 transition-colors"
-              aria-label="Email"
-            >
-              <Mail className="h-5 w-5" />
-            </a>
-          </div>
+          <nav className="flex items-center gap-1.5">
+            <FootLink href="https://www.linkedin.com/in/rparit1934/" icon={Linkedin} label="LinkedIn" />
+            <FootLink href="https://github.com/rparit-stacks" icon={Github} label="GitHub" />
+            <FootLink href="https://hub.docker.com/u/rparit1934" icon={Container} label="Docker" />
+            <FootLink href="mailto:rohitparit1934@gmail.com" icon={Mail} label="Email" />
+          </nav>
 
-          <div className="text-sm text-jungle-400">© {currentYear} Rohit Parit. All rights reserved.</div>
+          <div className="text-[12.5px] text-[var(--ios-text-muted)]">
+            © {year} Rohit Parit · Built with care
+          </div>
         </div>
       </div>
     </footer>
+  )
+}
+
+function FootLink({
+  href,
+  icon: Icon,
+  label,
+}: {
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full hover:bg-black/[0.04] dark:hover:bg-white/[0.06] text-[var(--ios-text-muted)] hover:text-[#0a84ff] transition"
+    >
+      <Icon className="h-4 w-4" />
+    </a>
   )
 }

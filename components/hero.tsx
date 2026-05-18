@@ -1,196 +1,160 @@
 "use client"
 
-import { Button } from "@/components/ui/button"
 import { motion } from "framer-motion"
-import { useState, useEffect } from "react"
-import { Download, Github, Linkedin } from "lucide-react"
+import { Download, Github, Linkedin, ArrowRight, Sparkles } from "lucide-react"
+import Link from "next/link"
+import { useTechExperience } from "@/hooks/use-tech-experience"
 
 export default function Hero() {
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
-  const [isMounted, setIsMounted] = useState(false)
-  const [dimensions, setDimensions] = useState({ width: 1200, height: 800 })
-
-  useEffect(() => {
-    setIsMounted(true)
-    setDimensions({
-      width: window.innerWidth,
-      height: window.innerHeight,
-    })
-
-    const handleMouseMove = (e: MouseEvent) => {
-      setMousePosition({
-        x: e.clientX / window.innerWidth,
-        y: e.clientY / window.innerHeight,
-      })
-    }
-
-    window.addEventListener("mousemove", handleMouseMove)
-    return () => window.removeEventListener("mousemove", handleMouseMove)
-  }, [])
-
-
-  const scrollToProjects = () => {
-    document.getElementById("projects")?.scrollIntoView({ behavior: "smooth" })
-  }
-
-  const scrollToContact = () => {
-    document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })
-  }
-
+  const techExp = useTechExperience()
   return (
-    <section className="relative h-screen flex items-center justify-center overflow-hidden bg-jungle-gradient">
-      {/* Jungle background */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat opacity-60"
-        style={{
-          backgroundImage: `url('/images/django-jungle.png')`,
-          transform: isMounted
-            ? `translateX(${mousePosition.x * -20}px) translateY(${mousePosition.y * -20}px)`
-            : "none",
-        }}
-      />
-
-      {/* Floating Spring Boot logos - only rendered client-side */}
-      {isMounted &&
-        Array.from({ length: 8 }).map((_, i) => (
-          <motion.div
-            key={i}
-            className="absolute opacity-20 z-10"
-            initial={{
-              x: Math.random() * dimensions.width,
-              y: -20,
-              rotate: Math.random() * 360,
-              scale: 0.3 + Math.random() * 0.5,
-            }}
-            animate={{
-              y: dimensions.height + 50,
-              x: `calc(${Math.random() * 100}vw + ${Math.sin(i) * 100}px)`,
-              rotate: Math.random() * 360 + 180,
-            }}
-            transition={{
-              duration: 15 + Math.random() * 25,
-              repeat: Number.POSITIVE_INFINITY,
-              delay: Math.random() * 5,
-              ease: "linear",
-            }}
-          >
-            <img 
-              src="/icons8-spring-boot.svg" 
-              alt="Spring Boot" 
-              className="w-8 h-8"
-              style={{ width: `${20 + Math.random() * 20}px`, height: `${20 + Math.random() * 20}px` }}
-            />
-          </motion.div>
-        ))}
-
-      <div className="container mx-auto px-4 z-10 relative">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden ios-mesh pt-28 pb-20">
+      {/* Soft animated gradient orbs */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="text-center"
-        >
-          <div className="flex justify-center mb-6">
-            <motion.div
-              className="relative h-40 w-40 md:h-48 md:w-48 lg:h-56 lg:w-56 animate-float"
-              whileHover={{ scale: 1.05 }}
-            >
-              <img
-                src="image.jpg"
-                alt="Rohit Parit - Java Developer"
-                className="w-full h-full object-contain drop-shadow-xl rounded-full"
-              />
-            </motion.div>
-          </div>
+          aria-hidden
+          className="absolute -top-32 -left-24 w-[40rem] h-[40rem] rounded-full bg-[#0a84ff]/25 blur-3xl"
+          animate={{ y: [0, 20, 0], x: [0, 10, 0] }}
+          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          aria-hidden
+          className="absolute -bottom-32 -right-24 w-[42rem] h-[42rem] rounded-full bg-[#af52de]/20 blur-3xl"
+          animate={{ y: [0, -20, 0], x: [0, -10, 0] }}
+          transition={{ duration: 16, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
 
+      <div className="container mx-auto px-4 md:px-6 relative">
+        <div className="max-w-4xl mx-auto text-center">
+          {/* Eyebrow chip */}
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="inline-flex items-center gap-2 ios-glass rounded-full px-4 py-1.5 text-xs font-medium text-[var(--ios-text-muted)] mb-6"
+          >
+            <span className="inline-flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+            Available for new opportunities
+            <Sparkles className="h-3.5 w-3.5 text-[#0a84ff]" />
+          </motion.div>
+
+          {/* Avatar */}
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            className="mx-auto mb-7 relative"
+          >
+            <div className="relative h-28 w-28 md:h-32 md:w-32 mx-auto">
+              <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[#0a84ff] via-[#5e5ce6] to-[#af52de] blur-xl opacity-50" />
+              <img
+                src="/pp.jpg"
+                alt="Rohit Parit"
+                className="relative h-full w-full rounded-full object-cover ring-4 ring-white dark:ring-[#1c1c1e] shadow-[0_18px_40px_-14px_rgba(10,132,255,0.45)]"
+              />
+            </div>
+          </motion.div>
+
+          {/* Headline */}
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.05 }}
+            className="text-[clamp(2.4rem,6vw,4.6rem)] font-bold leading-[1.04] tracking-[-0.04em] text-[var(--ios-text)]"
+          >
+            Backend engineering, <br className="hidden md:block" />
+            <span className="text-gradient-ios">crafted with care.</span>
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.12 }}
+            className="mt-5 text-[17px] md:text-xl text-[var(--ios-text-muted)] max-w-2xl mx-auto leading-relaxed"
+          >
+            I build secure, scalable products in Java &amp; Spring Boot — REST APIs,
+            microservices, payments, and AI-integrated systems used in production.
+          </motion.p>
+
+          {/* CTAs */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mt-9 flex flex-wrap items-center justify-center gap-3"
+          >
+            <Link href="#contact" className="ios-button-primary inline-flex items-center gap-2">
+              Hire me <ArrowRight className="h-4 w-4" />
+            </Link>
+            <Link href="/projects" className="ios-button-secondary inline-flex items-center gap-2">
+              View work
+            </Link>
+            <a
+              href="/rohit-parit-resume.pdf"
+              download="Rohit-Parit-Resume.pdf"
+              className="ios-button-secondary inline-flex items-center gap-2"
+            >
+              <Download className="h-4 w-4" /> Resume
+            </a>
+          </motion.div>
+
+          {/* Social row */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="mt-8 flex items-center justify-center gap-2 text-[var(--ios-text-muted)]"
+          >
+            <a
+              href="https://www.linkedin.com/in/rparit1934/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full ios-glass hover:text-[#0a84ff] transition"
+              aria-label="LinkedIn"
+            >
+              <Linkedin className="h-4.5 w-4.5" />
+            </a>
+            <a
+              href="https://github.com/rparit-stacks"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full ios-glass hover:text-[#0a84ff] transition"
+              aria-label="GitHub"
+            >
+              <Github className="h-4.5 w-4.5" />
+            </a>
+          </motion.div>
+
+          {/* Stats strip */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
+            transition={{ duration: 0.7, delay: 0.4 }}
+            className="mt-14 grid grid-cols-3 gap-3 md:gap-6 max-w-2xl mx-auto"
           >
-            <h1 className="text-4xl md:text-6xl font-bold text-white mb-4 drop-shadow-lg">
-              Java Developer Specializing in
-              <span className="text-jungle-300"> Spring Boot & Microservices</span>
-            </h1>
-
-            <p className="text-xl md:text-2xl text-slate-200 max-w-3xl mx-auto mb-8 drop-shadow">
-              I help businesses build secure, scalable, and maintainable backend systems using Java, Spring Boot, and REST APIs.
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
-                size="lg"
-                onClick={scrollToContact}
-                className="bg-jungle-600 hover:bg-jungle-700 text-white border-2 border-jungle-500"
+            {[
+              { k: "5+", v: "Production apps" },
+              {
+                k: techExp?.shortLabel ?? "—",
+                v: "Tech experience",
+              },
+              { k: "160+", v: "LeetCode solved" },
+            ].map((s) => (
+              <div
+                key={s.v}
+                className="ios-glass rounded-2xl px-4 py-5 text-left"
               >
-                Hire Me
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={scrollToProjects}
-                className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
-              >
-                View Projects
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                asChild
-                className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
-              >
-                <a href="https://www.linkedin.com/in/rparit1934/" target="_blank" rel="noopener noreferrer">
-                  <Linkedin className="h-4 w-4 mr-2" /> LinkedIn
-                </a>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                asChild
-                className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
-              >
-                <a href="https://github.com/rparit-stacks" target="_blank" rel="noopener noreferrer">
-                  <Github className="h-4 w-4 mr-2" /> GitHub
-                </a>
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                asChild
-                className="border-2 border-jungle-300 text-white hover:bg-jungle-800/50"
-              >
-                <a href="/rohit-parit-resume.pdf" download="Rohit-Parit-Resume.pdf" target="_blank" rel="noopener noreferrer">
-                  <Download className="h-4 w-4 mr-2" /> Download Resume
-                </a>
-              </Button>
-            </div>
+                <div className="text-2xl md:text-3xl font-semibold tracking-tight">
+                  {s.k}
+                </div>
+                <div className="text-xs md:text-sm text-[var(--ios-text-muted)] mt-1">
+                  {s.v}
+                </div>
+              </div>
+            ))}
           </motion.div>
-        </motion.div>
-      </div>
-
-      {/* Jungle vines */}
-      <div className="absolute left-0 top-0 h-full w-24 opacity-40 pointer-events-none">
-        <motion.div
-          className="absolute top-0 left-4 w-4 h-full bg-contain bg-no-repeat bg-top"
-          style={{
-            backgroundImage:
-              'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 300"><path d="M12,0 Q16,50 8,100 Q0,150 12,200 Q24,250 12,300" stroke="%239ab354" fill="none" strokeWidth="2" /></svg>\')',
-          }}
-          animate={{ y: [0, -50, 0] }}
-          transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-        />
-      </div>
-
-      <div className="absolute right-0 top-0 h-full w-24 opacity-40 pointer-events-none">
-        <motion.div
-          className="absolute top-0 right-4 w-4 h-full bg-contain bg-no-repeat bg-top"
-          style={{
-            backgroundImage:
-              'url(\'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 300"><path d="M12,0 Q8,50 16,100 Q24,150 12,200 Q0,250 12,300" stroke="%239ab354" fill="none" strokeWidth="2" /></svg>\')',
-          }}
-          animate={{ y: [0, -30, 0] }}
-          transition={{ duration: 15, repeat: Number.POSITIVE_INFINITY, ease: "easeInOut" }}
-        />
+        </div>
       </div>
     </section>
   )

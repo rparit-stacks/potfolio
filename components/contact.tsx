@@ -1,29 +1,20 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardContent } from "@/components/ui/card"
-import { Github, Linkedin, Mail, Phone, MapPin } from "lucide-react"
+import { Github, Linkedin, Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react"
 import { supabase, isSupabaseReady } from "@/lib/supabase"
 
 export default function Contact() {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    message: "",
-  })
+  const [formData, setFormData] = useState({ name: "", email: "", message: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
+    setFormData((p) => ({ ...p, [name]: value }))
     setError(null)
   }
 
@@ -31,268 +22,261 @@ export default function Contact() {
     e.preventDefault()
     setIsSubmitting(true)
     setError(null)
-
     try {
-      // Get IP address and user agent for email
       let ipAddress = "unknown"
       try {
-        const ipResponse = await fetch("https://api.ipify.org?format=json")
-        const ipData = await ipResponse.json()
-        ipAddress = ipData.ip
-      } catch (error) {
-        console.error("Error fetching IP:", error)
-      }
+        const r = await fetch("https://api.ipify.org?format=json")
+        const d = await r.json()
+        ipAddress = d.ip
+      } catch {}
 
       const userAgent = typeof window !== "undefined" ? window.navigator.userAgent : "unknown"
-      
-      // Get source parameter from URL (e.g., ?source=resume, ?source=pdf, etc.)
       let source = "Direct Visit"
       if (typeof window !== "undefined") {
-        const urlParams = new URLSearchParams(window.location.search)
-        const sourceParam = urlParams.get("source")
-        if (sourceParam) {
-          source = sourceParam.charAt(0).toUpperCase() + sourceParam.slice(1) // Capitalize first letter
-        }
+        const p = new URLSearchParams(window.location.search)
+        const s = p.get("source")
+        if (s) source = s.charAt(0).toUpperCase() + s.slice(1)
       }
 
-      // Send email notification about form submission
       const emailResponse = await fetch("/api/send-email", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           type: "form",
-          ipAddress: ipAddress,
-          userAgent: userAgent,
-          source: source,
-          formData: {
-            name: formData.name,
-            email: formData.email,
-            message: formData.message,
-          },
+          ipAddress,
+          userAgent,
+          source,
+          formData,
         }),
       })
 
-      if (!emailResponse.ok) {
-        throw new Error("Failed to send email notification")
-      }
+      if (!emailResponse.ok) throw new Error("Failed to send message")
 
-      // Also insert into Supabase if configured
       if (isSupabaseReady) {
         try {
-          const { error: supabaseError } = await supabase.from("contacts").insert({
-            name: formData.name,
-            email: formData.email,
-            message: formData.message,
-          })
-
-          if (supabaseError) {
-            console.error("Supabase error (non-critical):", supabaseError)
-          }
-        } catch (supabaseErr) {
-          console.error("Supabase error (non-critical):", supabaseErr)
-        }
+          await supabase.from("contacts").insert(formData)
+        } catch {}
       }
 
-      setIsSubmitting(false)
       setSubmitted(true)
       setFormData({ name: "", email: "", message: "" })
-
-      // Reset the submitted state after 5 seconds
       setTimeout(() => setSubmitted(false), 5000)
     } catch (err: any) {
-      console.error("Error submitting form:", err)
-      setError(err.message || "Failed to send message. Please try again.")
+      setError(err?.message || "Failed to send message. Please try again.")
+    } finally {
       setIsSubmitting(false)
     }
   }
 
   return (
-    <section id="contact" className="py-20 bg-slate-50 dark:bg-slate-800">
-      <div className="container mx-auto px-4">
+    <section id="contact" className="py-24 bg-[var(--ios-bg)] relative">
+      <div className="container mx-auto px-4 md:px-6">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
           viewport={{ once: true }}
-          className="text-center mb-12"
+          transition={{ duration: 0.5 }}
+          className="text-center max-w-2xl mx-auto mb-12"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-800 dark:text-white mb-4">Get In Touch</h2>
-          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-            Have a project in mind or want to discuss how I can help your business? Let's talk!
+          <p className="ios-section-eyebrow">Contact</p>
+          <h2 className="ios-section-title mt-2">Let’s build something good.</h2>
+          <p className="mt-4 text-[17px] text-[var(--ios-text-muted)] leading-relaxed">
+            Have a project in mind, or want to chat backends and AI? Drop a line.
           </p>
-          <div className="h-1 w-20 bg-emerald-500 mx-auto mt-4"></div>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6 max-w-5xl mx-auto">
+          {/* Info card */}
           <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="lg:col-span-2"
           >
-            <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 h-full">
-              <CardContent className="p-6">
-                <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Contact Information</h3>
+            <div className="ios-card p-6 md:p-7 h-full">
+              <h3 className="text-xl font-semibold tracking-tight mb-5">Contact info</h3>
+              <ul className="space-y-1">
+                <InfoRow icon={Mail} label="Email" value="rohitparit1934@gmail.com" href="mailto:rohitparit1934@gmail.com" />
+                <InfoRow icon={Phone} label="Phone" value="+91 98101 67696" href="tel:+919810167696" />
+                <InfoRow icon={MapPin} label="Location" value="New Delhi, IN" />
+              </ul>
 
-                <div className="space-y-6">
-                  <div className="flex items-center gap-4">
-                    <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-full">
-                      <Mail className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Email</p>
-                      <p className="text-slate-800 dark:text-white font-medium">rohitparit1934@gmail.com</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-full">
-                      <Phone className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Phone</p>
-                      <p className="text-slate-800 dark:text-white font-medium">+91 9810167696</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <div className="bg-emerald-100 dark:bg-emerald-900/30 p-3 rounded-full">
-                      <MapPin className="h-6 w-6 text-emerald-600 dark:text-emerald-400" />
-                    </div>
-                    <div>
-                      <p className="text-sm text-slate-500 dark:text-slate-400">Location</p>
-                      <p className="text-slate-800 dark:text-white font-medium">New Delhi, IN</p>
-                    </div>
-                  </div>
+              <div className="ios-divider my-5" />
 
-                  <div className="pt-6 border-t border-slate-200 dark:border-slate-700">
-                    <h4 className="text-lg font-semibold text-slate-800 dark:text-white mb-4">Connect with me</h4>
-                    <div className="flex gap-4">
-                      <a
-                        href="https://www.linkedin.com/in/rparit1934/"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-slate-100 dark:bg-slate-800 p-3 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                        aria-label="LinkedIn"
-                      >
-                        <Linkedin className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                      </a>
-                      <a
-                        href="https://github.com/rparit-stacks"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="bg-slate-100 dark:bg-slate-800 p-3 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                        aria-label="GitHub"
-                      >
-                        <Github className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                      </a>
-                      <a
-                        href="mailto:rohitparit1934@gmail.com"
-                        className="bg-slate-100 dark:bg-slate-800 p-3 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
-                        aria-label="Email"
-                      >
-                        <Mail className="h-5 w-5 text-slate-700 dark:text-slate-300" />
-                      </a>
+              <div className="text-xs uppercase tracking-wider text-[var(--ios-text-muted)] mb-3">
+                Connect
+              </div>
+              <div className="flex gap-2">
+                <Social href="https://www.linkedin.com/in/rparit1934/" icon={Linkedin} label="LinkedIn" />
+                <Social href="https://github.com/rparit-stacks" icon={Github} label="GitHub" />
+                <Social href="mailto:rohitparit1934@gmail.com" icon={Mail} label="Email" />
+              </div>
+            </div>
+          </motion.div>
+
+          {/* Form card */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="lg:col-span-3"
+          >
+            <div className="ios-card p-6 md:p-7">
+              <h3 className="text-xl font-semibold tracking-tight mb-5">Send a message</h3>
+
+              {submitted ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 dark:bg-emerald-500/10 dark:border-emerald-500/20 p-5 flex items-start gap-3">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600 mt-0.5" />
+                  <div>
+                    <div className="font-semibold text-emerald-700 dark:text-emerald-300">Message sent</div>
+                    <div className="text-sm text-emerald-700/80 dark:text-emerald-300/80">
+                      Thanks for reaching out — I’ll get back to you soon.
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            viewport={{ once: true }}
-          >
-            <Card className="border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900">
-              <CardContent className="p-6">
-                <h3 className="text-2xl font-bold text-slate-800 dark:text-white mb-6">Send a Message</h3>
-
-                {submitted ? (
-                  <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-900 rounded-lg p-4 text-center">
-                    <h4 className="text-green-800 dark:text-green-400 font-medium text-lg mb-2">Message Sent!</h4>
-                    <p className="text-green-700 dark:text-green-300">
-                      Thank you for reaching out. I'll get back to you as soon as possible.
-                    </p>
-                  </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-4">
-                    {error && (
-                      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900 rounded-lg p-4">
-                        <p className="text-red-800 dark:text-red-400 text-sm">{error}</p>
-                      </div>
-                    )}
-                    <div>
-                      <label
-                        htmlFor="name"
-                        className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-                      >
-                        Name
-                      </label>
-                      <Input
-                        id="name"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleChange}
-                        placeholder="Your name"
-                        required
-                        className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                      />
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  {error && (
+                    <div className="rounded-2xl border border-red-200 bg-red-50 dark:bg-red-500/10 dark:border-red-500/20 p-3 text-sm text-red-700 dark:text-red-300">
+                      {error}
                     </div>
+                  )}
 
-                    <div>
-                      <label
-                        htmlFor="email"
-                        className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-                      >
-                        Email
-                      </label>
-                      <Input
-                        id="email"
-                        name="email"
-                        type="email"
-                        value={formData.email}
-                        onChange={handleChange}
-                        placeholder="your.email@example.com"
-                        required
-                        className="bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                      />
-                    </div>
+                  <Field id="name" label="Name">
+                    <input
+                      id="name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Your name"
+                      required
+                      className="w-full bg-transparent outline-none text-[15px] placeholder:text-[var(--ios-text-muted)]"
+                    />
+                  </Field>
 
-                    <div>
-                      <label
-                        htmlFor="message"
-                        className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-                      >
-                        Message
-                      </label>
-                      <Textarea
-                        id="message"
-                        name="message"
-                        value={formData.message}
-                        onChange={handleChange}
-                        placeholder="Tell me about your project..."
-                        required
-                        className="min-h-[150px] bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700"
-                      />
-                    </div>
+                  <Field id="email" label="Email">
+                    <input
+                      id="email"
+                      name="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="you@example.com"
+                      required
+                      className="w-full bg-transparent outline-none text-[15px] placeholder:text-[var(--ios-text-muted)]"
+                    />
+                  </Field>
 
-                    <Button
-                      type="submit"
-                      className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-                      disabled={isSubmitting}
-                    >
-                      {isSubmitting ? "Sending..." : "Send Message"}
-                    </Button>
-                  </form>
-                )}
-              </CardContent>
-            </Card>
+                  <Field id="message" label="Message" multiline>
+                    <textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleChange}
+                      placeholder="Tell me about your project…"
+                      required
+                      rows={5}
+                      className="w-full bg-transparent outline-none text-[15px] placeholder:text-[var(--ios-text-muted)] resize-none"
+                    />
+                  </Field>
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="ios-button-primary inline-flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? "Sending…" : (<>Send message <Send className="h-4 w-4" /></>)}
+                  </button>
+                </form>
+              )}
+            </div>
           </motion.div>
         </div>
       </div>
     </section>
+  )
+}
+
+function InfoRow({
+  icon: Icon,
+  label,
+  value,
+  href,
+}: {
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+  value: string
+  href?: string
+}) {
+  const body = (
+    <div className="flex items-center gap-3 py-3">
+      <span className="inline-flex h-10 w-10 items-center justify-center rounded-2xl bg-[#0a84ff]/10 text-[#0a84ff]">
+        <Icon className="h-4.5 w-4.5" />
+      </span>
+      <div className="min-w-0">
+        <div className="text-[11px] uppercase tracking-wider text-[var(--ios-text-muted)]">{label}</div>
+        <div className="font-medium text-[15px] truncate">{value}</div>
+      </div>
+    </div>
+  )
+  return (
+    <li>
+      {href ? (
+        <a href={href} className="block rounded-xl hover:bg-black/[0.03] dark:hover:bg-white/[0.04] -mx-2 px-2 transition">
+          {body}
+        </a>
+      ) : (
+        <div className="-mx-2 px-2">{body}</div>
+      )}
+    </li>
+  )
+}
+
+function Social({
+  href,
+  icon: Icon,
+  label,
+}: {
+  href: string
+  icon: React.ComponentType<{ className?: string }>
+  label: string
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label={label}
+      className="inline-flex h-10 w-10 items-center justify-center rounded-full ios-glass hover:text-[#0a84ff] transition"
+    >
+      <Icon className="h-4.5 w-4.5" />
+    </a>
+  )
+}
+
+function Field({
+  id,
+  label,
+  multiline,
+  children,
+}: {
+  id: string
+  label: string
+  multiline?: boolean
+  children: React.ReactNode
+}) {
+  return (
+    <div
+      className={`rounded-2xl border border-[var(--ios-separator)] bg-white dark:bg-white/[0.04] px-4 ${
+        multiline ? "py-3" : "py-2.5"
+      } focus-within:border-[#0a84ff] transition`}
+    >
+      <label htmlFor={id} className="block text-[11px] uppercase tracking-wider text-[var(--ios-text-muted)] mb-1">
+        {label}
+      </label>
+      {children}
+    </div>
   )
 }
